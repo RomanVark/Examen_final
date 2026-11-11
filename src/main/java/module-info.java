@@ -1,10 +1,13 @@
-module ni.edu.uam.examen_final {
-    requires javafx.controls;
-    requires javafx.fxml;
-
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-
-    opens ni.edu.uam.examen_final to javafx.fxml;
-    exports ni.edu.uam.examen_final;
+module ni.edu.uam.practicasprofesionales {
+ requires javafx.controls;
+ requires javafx.fxml;
+ requires jakarta.persistence;
+ requires org.hibernate.orm.core;
+ requires org.postgresql.jdbc;
+ requires java.sql;
+ requires java.naming;
+ requires java.logging;
+ exports ni.edu.uam.practicasprofesionales.app;
+ opens ni.edu.uam.practicasprofesionales.controller to javafx.fxml;
+ opens ni.edu.uam.practicasprofesionales.model.academico to org.hibernate.orm.core;
 }
