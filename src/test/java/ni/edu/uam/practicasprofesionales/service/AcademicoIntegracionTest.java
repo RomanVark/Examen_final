@@ -22,12 +22,14 @@ class AcademicoIntegracionTest {
    assertNotNull(guardada.getId());
    guardada.setNombre("Carrera editada");
    guardada=servicio.guardar(guardada);
-   assertTrue(servicio.carreras().stream().anyMatch(x->x.getId().equals(guardada.getId())&&x.getNombre().equals("Carrera editada")));
+   Long carreraId=guardada.getId();
+   assertTrue(servicio.carreras().stream().anyMatch(x->x.getId().equals(carreraId)&&x.getNombre().equals("Carrera editada")));
    Estudiante e=new Estudiante();e.setCarnet("T-"+tag);e.setNombres("Persona");
    e.setApellidos("Prueba");e.setCorreo("t"+tag.toLowerCase()+"@demo.example");e.setCarrera(guardada);
    estudiante=servicio.guardar(e);
    assertNotNull(estudiante.getId());
-   assertTrue(servicio.buscarEstudiantes("Carrera editada").stream().anyMatch(x->x.getId().equals(estudiante.getId())));
+   Long estudianteId=estudiante.getId();
+   assertTrue(servicio.buscarEstudiantes("Carrera editada").stream().anyMatch(x->x.getId().equals(estudianteId)));
   }finally{
    if(estudiante!=null)servicio.eliminarEstudiante(estudiante.getId());
    if(guardada!=null)servicio.eliminarCarrera(guardada.getId());
