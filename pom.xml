@@ -5,12 +5,12 @@
  <groupId>ni.edu.uam</groupId><artifactId>PracticasProfesionalesFX</artifactId><version>1.0.0-SNAPSHOT</version>
  <name>PracticasProfesionalesFX - módulo académico</name>
  <properties><maven.compiler.release>21</maven.compiler.release><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- <javafx.version>21.0.6</javafx.version><hibernate.version>6.6.36.Final</hibernate.version><junit.version>5.12.1</junit.version></properties>
+ <javafx.version>21.0.6</javafx.version><hibernate.version>6.6.59.Final</hibernate.version><junit.version>5.12.1</junit.version></properties>
  <dependencies>
   <dependency><groupId>org.openjfx</groupId><artifactId>javafx-controls</artifactId><version>${javafx.version}</version></dependency>
   <dependency><groupId>org.openjfx</groupId><artifactId>javafx-fxml</artifactId><version>${javafx.version}</version></dependency>
   <dependency><groupId>org.hibernate.orm</groupId><artifactId>hibernate-core</artifactId><version>${hibernate.version}</version></dependency>
-  <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.7</version></dependency>
+  <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.14</version></dependency>
   <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-simple</artifactId><version>2.0.17</version></dependency>
   <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>${junit.version}</version><scope>test</scope></dependency>
  </dependencies>

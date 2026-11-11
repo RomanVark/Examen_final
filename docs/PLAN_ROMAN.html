@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entrega académica de Roman — Prácticas Profesionales</title>
+<style>body{font:16px/1.65 system-ui,Segoe UI,Arial;background:#f2f7fa;color:#26394a;margin:0}
+header{background:#176b80;color:#fff;padding:34px max(20px,calc((100% - 940px)/2))}
+main{max-width:940px;padding:26px 20px;margin:auto}
+section{background:white;padding:25px;margin:20px 0;border:1px solid #dae5e9;border-radius:12px}
+h1{margin:0}h2{color:#176b80}code,pre{font:14px/1.6 Consolas,monospace;background:#f1f5f7;border-radius:6px;padding:3px}
+pre{white-space:pre-wrap;padding:18px}
+small{color:#557080}.tag{background:#d5f5e9;border-radius:12px;padding:5px 12px}
+li{margin-bottom:12px}input{accent-color:#176b80}a{color:#176b80}
+</style></head>
+<body><header><small>Proyecto final de Programación de Aplicaciones de Escritorio</small><h1>Roman · Módulo académico</h1>
+<p>Rama existente: <strong>Roman</strong> · Responsabilidad: <strong>25 %</strong> · Revisión: <strong>Cristopher Santana</strong></p>
+</header><main>
+<section><h2>Entidades y alcance</h2><p><span class="tag">Carrera</span> <span class="tag">Estudiante</span> <span class="tag">TutorAcademico</span></p>
+<ol>
+<li><label><input type="checkbox"> Comprobar JPA y asociación Carrera 1:N Estudiante.</label></li>
+<li><label><input type="checkbox"> Validar campos, código/carné/correo únicos y estados activo/inactivo.</label></li>
+<li><label><input type="checkbox"> Manejar altas, edición, búsquedas y eliminaciones con Hibernate.</label></li>
+<li><label><input type="checkbox"> Personalizar inicio.fxml con indicadores, HQL y CSS.</label></li>
+<li><label><input type="checkbox"> Ejecutar al menos tres casos de prueba académicos.</label></li>
+<li><label><input type="checkbox"> Capturar evidencias reales de CRUD y caso negativo.</label></li></ol>
+</section>
+<section><h2>Pasos para comprobar la entrega</h2><ol>
+<li>Seleccionar <strong>Eclipse Temurin JDK 21.0.12</strong> en IntelliJ IDEA. Abrir la carpeta raíz que contiene <code>pom.xml</code>.</li>
+<li>En pgAdmin, sobre <code>postgres</code>, ejecutar <code>sql/00_crear_base.sql</code> si aún no existe la base.</li>
+<li>Conectarse a <code>practicas_profesionales</code> y ejecutar <code>sql/01_academico.sql</code>, <code>sql/02_ejemplos_academicos.sql</code> y <code>sql/03_verificaciones_academicas.sql</code>.</li>
+<li>En PowerShell configurar las variables de entorno y ejecutar pruebas y JavaFX:</li></ol>
+<pre>$env:DB_USER="postgres"
+$env:DB_PASSWORD="1234" # solo para laboratorio local
+$env:DB_URL="jdbc:postgresql://localhost:5432/practicas_profesionales"
+./mvnw.cmd clean test
+./mvnw.cmd javafx:run</pre>
+<p>Comprobar en la app: Carrera → crear/editar; Estudiante → seleccionar carrera, guardar y buscar; Tutor → guardar/actualizar/eliminar. Probar carné y correo duplicado. Abrir FXML con Scene Builder y comprobar la vista.</p>
+</section>
+<section><h2>Mensajes de commits y evidencias</h2>
+<pre>chore(academico): configurar JavaFX 21, Maven y persistencia JPA
+feat(academico): implementar entidades Carrera, Estudiante y Tutor con CRUD JPA
+feat(academico): integrar CRUD JavaFX, filtros y dashboard HQL
+test(academico): agregar pruebas CRUD y datos de ejemplo PostgreSQL
+fix(academico): corregir capturas de variables en pruebas CRUD
+docs(academico): añadir instrucciones y checklist de revisión académica</pre>
+<p>Para las capturas usar nombres sugeridos en <code>docs/ACADEMICO_ROMAN.md</code>. Ninguna evidencia se considera completada hasta generar la captura en un entorno real.</p>
+<p>La rama <code>master</code> no se modifica. Solicitar revisión a Cristopher antes de integrar con las otras tres partes del proyecto.</p>
+</section></main></body></html>
