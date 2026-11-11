@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="ni.edu.uam.practicasprofesionales.controller.InicioController"
+ spacing="18" styleClass="page">
+ <Label text="Resumen de gestión académica" styleClass="h1"/>
+ <HBox spacing="12">
+  <VBox styleClass="stat"><Label text="Carreras"/><Label fx:id="totalCarreras" text="—" styleClass="stat-number"/></VBox>
+  <VBox styleClass="stat"><Label text="Estudiantes"/><Label fx:id="totalEstudiantes" text="—" styleClass="stat-number"/></VBox>
+  <VBox styleClass="stat"><Label text="Tutores"/><Label fx:id="totalTutores" text="—" styleClass="stat-number"/></VBox>
+  <VBox styleClass="stat"><Label text="Estudiantes activos"/><Label fx:id="totalActivos" text="—" styleClass="stat-number"/></VBox>
+ </HBox>
+ <Label text="Estudiantes por carrera (HQL con LEFT JOIN)" styleClass="section-title"/>
+ <ListView fx:id="distribucion" prefHeight="260" VBox.vgrow="ALWAYS"/>
+ <HBox spacing="14"><Button text="Actualizar indicadores" onAction="#actualizar" styleClass="primary"/><Label fx:id="estado" text="Cargando…"/></HBox>
+</VBox>

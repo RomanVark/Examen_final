@@ -1,0 +1,20 @@
+.root{-fx-font-family:"Segoe UI",Arial,sans-serif;-fx-font-size:13px;-fx-background-color:#f3f7fa;-fx-text-fill:#23384a}
+.app-root{-fx-background-color:#f3f7fa}
+.app-header{-fx-padding:25 30;-fx-background-color:linear-gradient(to right,#176b80,#3395aa)}
+.brand{-fx-text-fill:white;-fx-font-weight:bold;-fx-font-size:23px}
+.subtitle{-fx-text-fill:#e1f8ff;-fx-font-size:13px}
+.workspace{-fx-padding:12}
+.page{-fx-padding:25}
+.h1{-fx-font-weight:bold;-fx-font-size:22px}
+.section-title{-fx-font-size:15px;-fx-font-weight:bold}
+.stat{-fx-background-color:white;-fx-border-color:#d9e7ed;-fx-border-radius:10;-fx-background-radius:10;-fx-padding:16;-fx-min-width:170}
+.stat-number{-fx-font-size:28px;-fx-text-fill:#176b80;-fx-font-weight:bold}
+.toolbar{-fx-padding:18;-fx-alignment:center-left}
+.form-scroll{-fx-background-color:#fff}
+.editor{-fx-padding:16;-fx-background-color:white}
+.primary{-fx-background-color:#176b80;-fx-text-fill:white;-fx-font-weight:bold}
+.primary:hover{-fx-background-color:#0c5064}
+.button{-fx-cursor:hand}
+.text-field,.combo-box{-fx-pref-height:34px}
+.footer{-fx-padding:12 20;-fx-text-fill:#34566c;-fx-background-color:#e8f2f5}
+.table-view{-fx-background-color:white}
