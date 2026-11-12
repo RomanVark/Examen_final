@@ -32,7 +32,8 @@ public class SupervisorEmpresa {
     private String cargo;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "empresa_id", nullable = false)
+    @JoinColumn(name = "empresa_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_supervisores_empresa_empresa"))
     private Empresa empresa;
 
     @Column(name = "activo", nullable = false)

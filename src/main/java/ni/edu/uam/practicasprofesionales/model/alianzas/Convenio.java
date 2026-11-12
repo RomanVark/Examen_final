@@ -23,7 +23,8 @@ public class Convenio {
     private String codigo;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "empresa_id", nullable = false)
+    @JoinColumn(name = "empresa_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_convenios_empresa_empresa"))
     private Empresa empresa;
 
     @Column(name = "fecha_inicio", nullable = false)
