@@ -27,6 +27,7 @@ public class JpaRepository<T> {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
+                ValidacionDeNegocio.validarUnicidad(em, entity);
                 Object id = type.getMethod("getId").invoke(entity);
                 T result;
                 if (id == null) { em.persist(entity); result = entity; }

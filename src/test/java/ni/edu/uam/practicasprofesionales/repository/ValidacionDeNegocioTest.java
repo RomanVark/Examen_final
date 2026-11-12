@@ -7,6 +7,7 @@ import ni.edu.uam.practicasprofesionales.model.seguimiento.*;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import ni.edu.uam.practicasprofesionales.model.enums.EstadoConvenio;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ValidacionDeNegocioTest {
@@ -21,7 +22,9 @@ class ValidacionDeNegocioTest {
     @Test void fechasEnOrdenIncorrectoSeRechazan() {
         Convenio c = new Convenio();
         c.setCodigo("C-TEST");
-        c.setEmpresa(new Empresa());
+        Empresa empresa = new Empresa();
+        empresa.setId(1L);
+        c.setEmpresa(empresa);
         c.setFechaInicio(LocalDate.of(2026, 12, 1));
         c.setFechaFin(LocalDate.of(2026, 1, 1));
         c.setEstado(ni.edu.uam.practicasprofesionales.model.enums.EstadoConvenio.VIGENTE);
@@ -42,4 +45,60 @@ class ValidacionDeNegocioTest {
         tutor.setCorreo("correo-sin-arroba"); tutor.setEspecialidad("Sistemas"); tutor.setActivo(true);
         assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(tutor));
     }
+    @Test void empresaConRucInvalidoSeRechaza() {
+        Empresa empresa = empresaValida("RUC CON ESPACIOS");
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(empresa));
+    }
+
+    @Test void rucSeNormalizaParaComparacion() {
+        assertEquals("DEMO-001", ValidacionDeNegocio.normalizarRuc("  demo-001  "));
+    }
+
+    @Test void convenioVigenteFueraDeFechasSeRechaza() {
+        Convenio convenio = convenioValido();
+        convenio.setFechaInicio(LocalDate.now().minusYears(2));
+        convenio.setFechaFin(LocalDate.now().minusDays(1));
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(convenio));
+    }
+
+    @Test void convenioVigenteDentroDeFechasSeAcepta() {
+        Convenio convenio = convenioValido();
+        convenio.setFechaInicio(LocalDate.now().minusDays(1));
+        convenio.setFechaFin(LocalDate.now().plusDays(30));
+        assertDoesNotThrow(() -> ValidacionDeNegocio.validar(convenio));
+    }
+
+    @Test void supervisorSinEmpresaRegistradaSeRechaza() {
+        SupervisorEmpresa supervisor = new SupervisorEmpresa();
+        supervisor.setNombres("Ana");
+        supervisor.setApellidos("Pérez");
+        supervisor.setCorreo("ana@example.com");
+        supervisor.setCargo("Coordinadora");
+        supervisor.setActivo(true);
+        supervisor.setEmpresa(new Empresa());
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(supervisor));
+    }
+
+    private static Empresa empresaValida(String ruc) {
+        Empresa empresa = new Empresa();
+        empresa.setRuc(ruc);
+        empresa.setRazonSocial("Empresa de prueba");
+        empresa.setSector("Tecnología");
+        empresa.setCorreo("contacto@example.com");
+        empresa.setActiva(true);
+        return empresa;
+    }
+
+    private static Convenio convenioValido() {
+        Convenio convenio = new Convenio();
+        convenio.setCodigo("CONV-TEST");
+        Empresa empresa = empresaValida("DEMO-TEST");
+        empresa.setId(1L);
+        convenio.setEmpresa(empresa);
+        convenio.setFechaInicio(LocalDate.now().minusDays(1));
+        convenio.setFechaFin(LocalDate.now().plusDays(30));
+        convenio.setEstado(EstadoConvenio.VIGENTE);
+        return convenio;
+    }
+
 }

@@ -4,14 +4,18 @@ import ni.edu.uam.practicasprofesionales.model.academico.*;
 import ni.edu.uam.practicasprofesionales.model.alianzas.*;
 import ni.edu.uam.practicasprofesionales.model.asignaciones.*;
 import ni.edu.uam.practicasprofesionales.model.seguimiento.*;
+import ni.edu.uam.practicasprofesionales.model.enums.EstadoConvenio;
+import jakarta.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /** Validaciones adicionales a CHECK/UNIQUE/FOREIGN KEY de PostgreSQL. */
 public final class ValidacionDeNegocio {
     private static final Pattern EMAIL = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    private static final Pattern RUC = Pattern.compile("^[A-Za-z0-9][A-Za-z0-9-]{3,149}$");
     private ValidacionDeNegocio() { }
 
     public static void validar(Object entity) {
@@ -34,7 +38,14 @@ public final class ValidacionDeNegocio {
                     throw new IllegalArgumentException("El correo tiene un formato incorrecto.");
             } catch (IllegalAccessException ex) { throw new IllegalStateException(ex); }
         }
-        if (entity instanceof Convenio x) fechas(x.getFechaInicio(), x.getFechaFin());
+        if (entity instanceof Empresa x && x.getRuc() != null && !RUC.matcher(x.getRuc().strip()).matches())
+            throw new IllegalArgumentException("El RUC solo puede contener letras, números y guiones (mínimo 4 caracteres).");
+        if (entity instanceof SupervisorEmpresa x) validarEmpresaAsociada(x.getEmpresa(), "el supervisor");
+        if (entity instanceof Convenio x) {
+            validarEmpresaAsociada(x.getEmpresa(), "el convenio");
+            fechas(x.getFechaInicio(), x.getFechaFin());
+            validarVigenciaConvenio(x);
+        }
         if (entity instanceof OfertaPractica x) {
             fechas(x.getFechaInicio(), x.getFechaFin());
             positivo(x.getCupos(), "Los cupos");
@@ -55,6 +66,48 @@ public final class ValidacionDeNegocio {
                 (x.getCalificacion().compareTo(BigDecimal.ZERO) < 0 || x.getCalificacion().compareTo(new BigDecimal("100")) > 0))
             throw new IllegalArgumentException("La calificación debe estar entre 0 y 100.");
     }
+    /** Normaliza RUC para comparar sin diferencias de mayúsculas o espacios externos. */
+    public static String normalizarRuc(String ruc) {
+        return ruc == null ? null : ruc.strip().toUpperCase(Locale.ROOT);
+    }
+
+    /** Comprueba duplicados dentro de la misma transacción y permite conservar el RUC al editar. */
+    public static void validarUnicidad(EntityManager em, Object entity) {
+        if (!(entity instanceof Empresa empresa) || empresa.getRuc() == null) return;
+        String ruc = normalizarRuc(empresa.getRuc());
+        if (ruc.isBlank()) return;
+
+        Long duplicados;
+        if (empresa.getId() == null) {
+            duplicados = em.createQuery(
+                    "select count(e) from Empresa e where upper(trim(e.ruc)) = :ruc", Long.class)
+                .setParameter("ruc", ruc)
+                .getSingleResult();
+        } else {
+            duplicados = em.createQuery(
+                    "select count(e) from Empresa e where upper(trim(e.ruc)) = :ruc and e.id <> :id", Long.class)
+                .setParameter("ruc", ruc)
+                .setParameter("id", empresa.getId())
+                .getSingleResult();
+        }
+        if (duplicados > 0) throw new IllegalArgumentException("Ya existe una empresa registrada con ese RUC.");
+    }
+
+    private static void validarEmpresaAsociada(Empresa empresa, String descripcion) {
+        if (empresa == null || empresa.getId() == null)
+            throw new IllegalArgumentException("Seleccione una empresa registrada para " + descripcion + ".");
+    }
+
+    private static void validarVigenciaConvenio(Convenio convenio) {
+        if (convenio.getEstado() == null || convenio.getFechaInicio() == null || convenio.getFechaFin() == null) return;
+        LocalDate hoy = LocalDate.now();
+        if (convenio.getEstado() == EstadoConvenio.VIGENTE
+                && (hoy.isBefore(convenio.getFechaInicio()) || hoy.isAfter(convenio.getFechaFin())))
+            throw new IllegalArgumentException("Un convenio solo puede estar VIGENTE dentro de sus fechas de vigencia.");
+        if (convenio.getEstado() == EstadoConvenio.VENCIDO && !hoy.isAfter(convenio.getFechaFin()))
+            throw new IllegalArgumentException("Un convenio solo puede marcarse VENCIDO después de su fecha final.");
+    }
+
     private static void fechas(LocalDate inicio, LocalDate fin) {
         if (inicio != null && fin != null && fin.isBefore(inicio))
             throw new IllegalArgumentException("La fecha final no puede ser anterior a la fecha inicial.");
