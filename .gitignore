@@ -1,13 +1,18 @@
-target/
+# IntelliJ / IDE
 .idea/
 *.iml
-*.class
+/out/
+# Maven
+/target/
+# Configuraciones y secretos locales
 .env
 .env.*
 !.env.example
+config/local.properties
+**/application-local.properties
+# Exportaciones y bases locales
 *.log
+*.bak
+*.csv
 .DS_Store
-desktop.ini
-out/
-.vscode/
-
+Thumbs.db

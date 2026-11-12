@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.practicasprofesionales.controller.CrudController" styleClass="page">
+    <top>
+        <VBox spacing="12">
+            <Label text="Administración de registros" styleClass="page-title" />
+            <Label text="CRUD completo para las entidades. Selecciona un módulo y administra sus relaciones." styleClass="page-subtitle" />
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <ComboBox fx:id="selectorEntidad" onAction="#cambiarEntidad" prefWidth="285" promptText="Seleccionar módulo" />
+                <TextField fx:id="filtro" promptText="Buscar por ID o cualquier campo..." HBox.hgrow="ALWAYS" />
+                <Button text="Actualizar" onAction="#recargar" styleClass="secondary-button" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.69" styleClass="crud-split">
+            <items>
+                <VBox spacing="8" minWidth="390">
+                    <TableView fx:id="tabla" VBox.vgrow="ALWAYS" placeholder="No hay registros; crea uno desde el formulario." />
+                    <Label fx:id="etiquetaCantidad" text="0 registros" styleClass="stat-desc" />
+                </VBox>
+                <VBox spacing="12" minWidth="290" styleClass="form-panel">
+                    <Label fx:id="etiquetaFormulario" text="Nuevo registro" styleClass="panel-title"/>
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS" styleClass="clean-scroll">
+                        <content><VBox fx:id="camposFormulario" spacing="13" /></content>
+                    </ScrollPane>
+                    <HBox spacing="7">
+                        <Button text="Nuevo" onAction="#nuevo" styleClass="secondary-button" />
+                        <Button text="Guardar" onAction="#guardar" styleClass="primary-button" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                        <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminar" styleClass="danger-button" />
+                    </HBox>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+    <bottom><Label fx:id="etiquetaAyuda" text="Selecciona un módulo para empezar." styleClass="status-note" /></bottom>
+</BorderPane>

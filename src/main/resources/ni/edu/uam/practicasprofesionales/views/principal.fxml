@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" prefWidth="1200" prefHeight="760" styleClass="app-root">
- <top><VBox styleClass="app-header" spacing="5">
-  <Label text="GESTIÓN DE PRÁCTICAS PROFESIONALES" styleClass="brand"/>
-  <Label text="Módulo académico · Carrera / Estudiante / Tutor" styleClass="subtitle"/>
- </VBox></top>
- <center><TabPane tabClosingPolicy="UNAVAILABLE" styleClass="workspace">
-  <tabs>
-   <Tab text="Panel académico"><content><fx:include source="inicio.fxml"/></content></Tab>
-   <Tab text="Gestión académica"><content><fx:include source="academico.fxml"/></content></Tab>
-  </tabs>
- </TabPane></center>
- <bottom><Label text="Hibernate ORM + PostgreSQL  |  Temurin 21.0.12" styleClass="footer"/></bottom>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.practicasprofesionales.controller.PrincipalController"
+            styleClass="root-layout">
+    <left>
+        <VBox prefWidth="244" spacing="8" styleClass="sidebar">
+            <padding><Insets top="30" right="17" bottom="20" left="17"/></padding>
+            <Label text="PP" styleClass="logo"/>
+            <Label text="PRÁCTICAS" styleClass="sidebar-title"/>
+            <Label text="GESTIÓN UNIVERSITARIA" styleClass="sidebar-caption"/>
+            <Separator />
+            <Button text="  Inicio / Resumen" onAction="#mostrarInicio" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Catálogos" onAction="#mostrarCatalogos" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Gestión de prácticas" onAction="#mostrarOperaciones" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Reportes HQL" onAction="#mostrarReportes" maxWidth="Infinity" styleClass="nav-button" />
+            <Region VBox.vgrow="ALWAYS"/>
+            <Label text="Java 21 · JavaFX · Hibernate" styleClass="sidebar-footnote" />
+            <Label text="PostgreSQL · Maven" styleClass="sidebar-footnote" />
+        </VBox>
+    </left>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14" styleClass="topbar">
+            <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+            <Label text="Sistema de prácticas profesionales" styleClass="top-title" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="seccionActual" text="Resumen general" styleClass="top-crumb" />
+        </HBox>
+    </top>
+    <center><StackPane fx:id="areaContenido" styleClass="content" /></center>
 </BorderPane>
