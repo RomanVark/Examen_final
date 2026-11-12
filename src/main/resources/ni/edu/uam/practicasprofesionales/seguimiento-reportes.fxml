@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox spacing="14.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.practicasprofesionales.controller.SeguimientoReportesController">
+    <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+    <Label text="Reportes de seguimiento"
+           style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <HBox spacing="10.0">
+        <ComboBox fx:id="selectorReporte" prefWidth="300.0"/>
+        <Button text="Consultar" onAction="#cargarReporte"/>
+        <Button text="Exportar CSV" onAction="#exportarCsv"/>
+    </HBox>
+    <TableView fx:id="tablaReporte" VBox.vgrow="ALWAYS"/>
+    <Label fx:id="textoResultado" wrapText="true"/>
+</VBox>
