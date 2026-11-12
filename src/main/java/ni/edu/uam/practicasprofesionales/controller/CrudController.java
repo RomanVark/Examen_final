@@ -1,6 +1,7 @@
 package ni.edu.uam.practicasprofesionales.controller;
 
 import ni.edu.uam.practicasprofesionales.repository.JpaRepository;
+import ni.edu.uam.practicasprofesionales.model.alianzas.Empresa;
 import ni.edu.uam.practicasprofesionales.ui.EntityCatalog;
 import ni.edu.uam.practicasprofesionales.ui.EntityDefinition;
 import ni.edu.uam.practicasprofesionales.ui.FieldSpec;
@@ -16,6 +17,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,8 +117,18 @@ public class CrudController {
             return c;
         }
         if (!tipo.getName().startsWith("java.")) {
-            ComboBox<Object> c = new ComboBox<>(FXCollections.observableArrayList(listado(tipo)));
+            List<Object> opciones = new ArrayList<>(listado(tipo));
+            ComboBox<Object> c = new ComboBox<>(FXCollections.observableArrayList(opciones));
             c.setPromptText("Selecciona " + campo.label().toLowerCase());
+            if (tipo == Empresa.class) {
+                opciones.sort(Comparator.comparing(Object::toString, String.CASE_INSENSITIVE_ORDER));
+                c.setItems(FXCollections.observableArrayList(opciones));
+                c.setPromptText("Selecciona una empresa");
+                c.setVisibleRowCount(8);
+                c.getStyleClass().add("company-selector");
+                c.setCellFactory(lista -> crearCeldaEmpresa());
+                c.setButtonCell(crearCeldaEmpresa());
+            }
             return c;
         }
         if (campo.name().equals("observaciones") || campo.name().equals("descripcion") || campo.name().equals("actividad")) {
@@ -227,6 +239,18 @@ public class CrudController {
             }
         }
         throw new IllegalArgumentException("Tipo de control desconocido: " + campo.label());
+    }
+
+    private static ListCell<Object> crearCeldaEmpresa() {
+        return new ListCell<>() {
+            {
+                getStyleClass().add("company-option");
+            }
+            @Override protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.toString());
+            }
+        };
     }
 
     private Class<?> tipoCampo(String nombre) { return campo(actual.type(), nombre).getType(); }

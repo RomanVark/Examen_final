@@ -33,6 +33,32 @@
 .form-panel { -fx-background-color: white; -fx-padding: 15; -fx-background-radius: 10; -fx-border-color: #e4eaf0; -fx-border-radius: 10; }
 .field-caption { -fx-text-fill: #4b6171; -fx-font-weight: bold; -fx-font-size: 11px; }
 .input-app, .text-field, .combo-box, .date-picker, .text-area { -fx-background-radius: 5; -fx-font-size: 12px; }
+
+/* Selector de empresas: resalta opciones sin alterar los fx:id definidos en crud.fxml. */
+.company-selector {
+    -fx-background-color: white;
+    -fx-border-color: #cbdde5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 2 4;
+}
+.company-selector:focused {
+    -fx-border-color: #087e83;
+    -fx-border-width: 1.4;
+}
+.company-selector .list-cell, .company-option {
+    -fx-padding: 8 10;
+    -fx-text-fill: #25485d;
+    -fx-font-size: 12px;
+}
+.company-option:hover {
+    -fx-background-color: #e7f3f4;
+}
+.company-option:selected {
+    -fx-background-color: #d9eeee;
+    -fx-text-fill: #075e64;
+    -fx-font-weight: bold;
+}
 .table-view { -fx-background-color: white; -fx-background-radius: 7; -fx-border-color: #e4eaf0; -fx-border-radius: 7; }
 .table-view .column-header-background { -fx-background-color: #e8f0f5; }
 .table-view .column-header { -fx-background-color: transparent; -fx-pref-height: 38; }
