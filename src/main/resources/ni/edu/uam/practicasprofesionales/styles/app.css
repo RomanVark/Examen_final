@@ -67,3 +67,28 @@
 .crud-split > .split-pane-divider { -fx-background-color: transparent; -fx-padding: 0 5; }
 .clean-scroll { -fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent; }
 .clean-scroll > .viewport { -fx-background-color: transparent; }
+
+
+/* Fase UI 2: módulo académico con clases propias para no alterar estilos de otros módulos. */
+.academic-page { -fx-background-color: #f2f5f9; }
+.academic-toolbar {
+    -fx-padding: 16 20;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #e2e7ee transparent;
+}
+.academic-title { -fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #193449; }
+.academic-section-title { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #163c57; }
+.academic-tabs { -fx-background-color: #f2f5f9; }
+.academic-tabs .tab-content-area { -fx-background-color: #f2f5f9; }
+.academic-form-scroll { -fx-background: white; -fx-background-color: white; -fx-border-color: #e4eaf0; }
+.academic-form-scroll > .viewport { -fx-background-color: white; }
+.academic-editor { -fx-padding: 18; -fx-background-color: white; }
+.academic-editor .text-field, .academic-editor .combo-box { -fx-pref-height: 34; }
+.academic-primary {
+    -fx-background-color: #087e83; -fx-text-fill: white;
+    -fx-font-weight: bold; -fx-background-radius: 7;
+    -fx-padding: 10 14; -fx-cursor: hand;
+}
+.academic-primary:hover { -fx-background-color: #09666f; }
+.academic-footer { -fx-background-color: #e8f1f5; -fx-text-fill: #395b6d; -fx-padding: 11 18; }
