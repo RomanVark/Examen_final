@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.practicasprofesionales.controller.InicioController"
+            styleClass="clean-scroll">
+  <content>
+    <VBox spacing="22" styleClass="page">
+        <Label text="Resumen general" styleClass="page-title" />
+        <Label text="Una vista del proceso completo de prácticas, desde el estudiante hasta su evaluación." styleClass="page-subtitle" />
+        <HBox spacing="14">
+            <VBox spacing="9" styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Estudiantes" styleClass="stat-label"/><Label fx:id="totalEstudiantes" text="—" styleClass="stat-number"/><Label text="Registrados" styleClass="stat-desc"/></VBox>
+            <VBox spacing="9" styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Empresas" styleClass="stat-label"/><Label fx:id="totalEmpresas" text="—" styleClass="stat-number"/><Label text="Colaboradoras" styleClass="stat-desc"/></VBox>
+            <VBox spacing="9" styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Ofertas" styleClass="stat-label"/><Label fx:id="totalOfertas" text="—" styleClass="stat-number"/><Label text="Publicadas" styleClass="stat-desc"/></VBox>
+            <VBox spacing="9" styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Prácticas" styleClass="stat-label"/><Label fx:id="totalPracticas" text="—" styleClass="stat-number"/><Label text="Asignadas" styleClass="stat-desc"/></VBox>
+        </HBox>
+        <HBox spacing="18">
+            <VBox spacing="12" styleClass="panel" HBox.hgrow="ALWAYS">
+                <Label text="Flujo de trabajo" styleClass="panel-title" />
+                <Label text="1  Registra carreras, estudiantes, empresas y tutores." wrapText="true" styleClass="guide-line"/>
+                <Label text="2  Crea convenios y ofertas de prácticas disponibles." wrapText="true" styleClass="guide-line"/>
+                <Label text="3  Gestiona postulaciones y asigna supervisores." wrapText="true" styleClass="guide-line"/>
+                <Label text="4  Controla horas, bitácoras, documentos y evaluaciones." wrapText="true" styleClass="guide-line"/>
+                <Label text="5  Consulta reportes HQL y expórtalos como CSV." wrapText="true" styleClass="guide-line"/>
+            </VBox>
+            <VBox spacing="12" styleClass="panel" HBox.hgrow="ALWAYS">
+                <Label text="Tecnología y persistencia" styleClass="panel-title" />
+                <Label text="Persistencia transaccional con JPA / Hibernate ORM." wrapText="true" styleClass="guide-line"/>
+                <Label text="Doce entidades SQL con claves foráneas e integridad." wrapText="true" styleClass="guide-line"/>
+                <Label text="FXML editable en Scene Builder y temas CSS." wrapText="true" styleClass="guide-line"/>
+                <Label text="Sin JDBC directo para operaciones de mantenimiento." wrapText="true" styleClass="guide-line"/>
+                <Label fx:id="resumen" text="Consultando base de datos..." wrapText="true" styleClass="status-note"/>
+                <Button text="Actualizar indicadores" onAction="#actualizar" styleClass="primary-button" />
+            </VBox>
+        </HBox>
+    </VBox>
+  </content>
+</ScrollPane>
