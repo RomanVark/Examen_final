@@ -20,5 +20,11 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Compilar y ejecutar pruebas JUnit
-        run: bash ./mvnw --batch-mode --no-transfer-progress clean test
+      - name: Preparar pantalla virtual para JavaFX
+        run: |
+          if ! command -v xvfb-run >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y xvfb
+          fi
+      - name: Compilar y ejecutar pruebas JUnit y FXML
+        run: xvfb-run -a env RUN_FXML_UI_SMOKE=true bash ./mvnw --batch-mode --no-transfer-progress clean test
