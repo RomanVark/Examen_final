@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.practicasprofesionales.controller.AcademicoController" styleClass="academic-page">
+ <top><HBox spacing="16" styleClass="academic-toolbar"><Label text="Administración académica" styleClass="academic-title"/><Button text="Recargar datos" onAction="#recargar"/></HBox></top>
+ <center><TabPane tabClosingPolicy="UNAVAILABLE" styleClass="academic-tabs">
+  <tabs>
+   <Tab text="Carreras"><content><BorderPane>
+  <center><TableView fx:id="tablaCarreras" minWidth="300"/></center>
+  <right><ScrollPane fitToWidth="true" prefWidth="300" styleClass="academic-form-scroll"><content>
+  <VBox styleClass="academic-editor" spacing="10">
+    <Label text="Formulario de carreras" styleClass="academic-section-title"/>
+    
+    <TextField fx:id="carreraCodigo" promptText="Código"/>
+<TextField fx:id="carreraNombre" promptText="Nombre de carrera"/>
+<TextField fx:id="carreraFacultad" promptText="Facultad"/>
+    <CheckBox fx:id="carreraActiva" text="Activa" selected="true"/>
+    <Button text="Guardar / actualizar" maxWidth="Infinity" onAction="#guardarCarrera" styleClass="academic-primary"/>
+    <Button text="Eliminar seleccionado" maxWidth="Infinity" onAction="#eliminarCarrera"/>
+    <Button text="Nuevo / limpiar" maxWidth="Infinity" onAction="#limpiarCarrera"/>
+  </VBox>
+  </content></ScrollPane></right>
+ </BorderPane></content></Tab>
+   <Tab text="Estudiantes"><content><BorderPane>
+  <center><TableView fx:id="tablaEstudiantes" minWidth="300"/></center>
+  <right><ScrollPane fitToWidth="true" prefWidth="300" styleClass="academic-form-scroll"><content>
+  <VBox styleClass="academic-editor" spacing="10">
+    <Label text="Formulario de estudiantes" styleClass="academic-section-title"/>
+    <Label text="Búsqueda por carné, nombre o carrera"/><TextField fx:id="buscarEstudiante" promptText="Buscar estudiante"/><Label text="Carrera asignada"/><ComboBox fx:id="estudianteCarrera" maxWidth="Infinity"/>
+    <TextField fx:id="estudianteCarnet" promptText="Carné"/>
+<TextField fx:id="estudianteNombres" promptText="Nombres"/>
+<TextField fx:id="estudianteApellidos" promptText="Apellidos"/>
+<TextField fx:id="estudianteCorreo" promptText="Correo"/>
+<TextField fx:id="estudianteTelefono" promptText="Teléfono"/>
+    <CheckBox fx:id="estudianteActivo" text="Activo" selected="true"/>
+    <Button text="Guardar / actualizar" maxWidth="Infinity" onAction="#guardarEstudiante" styleClass="academic-primary"/>
+    <Button text="Eliminar seleccionado" maxWidth="Infinity" onAction="#eliminarEstudiante"/>
+    <Button text="Nuevo / limpiar" maxWidth="Infinity" onAction="#limpiarEstudiante"/>
+  </VBox>
+  </content></ScrollPane></right>
+ </BorderPane></content></Tab>
+   <Tab text="Tutores"><content><BorderPane>
+  <center><TableView fx:id="tablaTutores" minWidth="300"/></center>
+  <right><ScrollPane fitToWidth="true" prefWidth="300" styleClass="academic-form-scroll"><content>
+  <VBox styleClass="academic-editor" spacing="10">
+    <Label text="Formulario de tutores" styleClass="academic-section-title"/>
+    <Label text="Búsqueda de tutor"/><TextField fx:id="buscarTutor" promptText="Buscar tutor"/>
+    <TextField fx:id="tutorNombres" promptText="Nombres"/>
+<TextField fx:id="tutorApellidos" promptText="Apellidos"/>
+<TextField fx:id="tutorCorreo" promptText="Correo"/>
+<TextField fx:id="tutorEspecialidad" promptText="Especialidad"/>
+    <CheckBox fx:id="tutorActivo" text="Activo" selected="true"/>
+    <Button text="Guardar / actualizar" maxWidth="Infinity" onAction="#guardarTutor" styleClass="academic-primary"/>
+    <Button text="Eliminar seleccionado" maxWidth="Infinity" onAction="#eliminarTutor"/>
+    <Button text="Nuevo / limpiar" maxWidth="Infinity" onAction="#limpiarTutor"/>
+  </VBox>
+  </content></ScrollPane></right>
+ </BorderPane></content></Tab>
+  </tabs>
+ </TabPane></center>
+ <bottom><Label fx:id="estado" text="Seleccione un registro para editar." styleClass="academic-footer"/></bottom>
+</BorderPane>

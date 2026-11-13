@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<VBox spacing="17" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.practicasprofesionales.controller.ReportesController" styleClass="page">
+    <Label text="Consultas HQL y reportes" styleClass="page-title" />
+    <Label text="Consultas JOIN con datos reales recuperados de PostgreSQL a través de Hibernate." styleClass="page-subtitle" />
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <ComboBox fx:id="selectorReporte" onAction="#cargar" prefWidth="430" />
+        <Button text="Ejecutar consulta" onAction="#cargar" styleClass="primary-button" />
+        <Button text="Exportar CSV" onAction="#exportarCsv" styleClass="secondary-button" />
+    </HBox>
+    <TableView fx:id="tablaReporte" VBox.vgrow="ALWAYS" >
+            <placeholder><Label text="No hay resultados para la consulta seleccionada." /></placeholder>
+        </TableView>
+    <Label fx:id="textoResultado" text="Selecciona una consulta" styleClass="status-note" />
+</VBox>

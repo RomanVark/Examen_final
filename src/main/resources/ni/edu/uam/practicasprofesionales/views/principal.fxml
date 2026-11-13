@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.practicasprofesionales.controller.PrincipalController"
+            styleClass="root-layout">
+    <left>
+        <VBox prefWidth="244" spacing="8" styleClass="sidebar">
+            <padding><Insets top="30" right="17" bottom="20" left="17"/></padding>
+            <Label text="PP" styleClass="logo"/>
+            <Label text="PRÁCTICAS" styleClass="sidebar-title"/>
+            <Label text="GESTIÓN UNIVERSITARIA" styleClass="sidebar-caption"/>
+            <Separator />
+            <Button text="  Inicio / Resumen" onAction="#mostrarInicio" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Módulo académico" onAction="#mostrarAcademico" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Catálogos" onAction="#mostrarCatalogos" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Gestión de prácticas" onAction="#mostrarOperaciones" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Reportes HQL" onAction="#mostrarReportes" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Seguimiento / Reportes" onAction="#mostrarSeguimiento" maxWidth="Infinity" styleClass="nav-button" />
+            <Region VBox.vgrow="ALWAYS"/>
+            <Label text="Java 21 · JavaFX · Hibernate" styleClass="sidebar-footnote" />
+            <Label text="PostgreSQL · Maven" styleClass="sidebar-footnote" />
+        </VBox>
+    </left>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14" styleClass="topbar">
+            <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+            <Label text="Sistema de prácticas profesionales" styleClass="top-title" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="seccionActual" text="Resumen general" styleClass="top-crumb" />
+        </HBox>
+    </top>
+    <center><StackPane fx:id="areaContenido" styleClass="content" /></center>
+</BorderPane>
