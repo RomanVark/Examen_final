@@ -64,7 +64,10 @@ public class ReportesController {
             List<String> lineas = new ArrayList<>();
             lineas.add(csv(reporte.columnas()));
             for (List<String> fila : tablaReporte.getItems()) lineas.add(csv(fila));
-            Files.write(Path.of(archivo.toURI()), lineas, StandardCharsets.UTF_8);
+            // BOM UTF-8 para que Excel reconozca correctamente tildes y eñes.
+            String contenido = "\uFEFF" + String.join(System.lineSeparator(), lineas)
+                    + System.lineSeparator();
+            Files.writeString(Path.of(archivo.toURI()), contenido, StandardCharsets.UTF_8);
             Alertas.informacion("Reporte exportado: " + archivo.getAbsolutePath());
         } catch (Exception ex) { Alertas.error("No se pudo exportar: " + ex.getMessage()); }
     }

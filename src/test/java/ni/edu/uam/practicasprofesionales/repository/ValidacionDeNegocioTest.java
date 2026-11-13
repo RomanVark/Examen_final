@@ -79,6 +79,72 @@ class ValidacionDeNegocioTest {
         assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(supervisor));
     }
 
+
+    @Test void bitacoraRechazaHorasMayoresA24() {
+        Bitacora b = new Bitacora();
+        Practica practica = new Practica();
+        practica.setId(1L);
+        b.setPractica(practica);
+        b.setFecha(LocalDate.of(2026, 9, 1));
+        b.setActividad("Actividad de prueba");
+        b.setHoras(25);
+        b.setValidada(false);
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(b));
+    }
+
+    @Test void bitacoraRequiereUnaPracticaRegistrada() {
+        Bitacora b = new Bitacora();
+        b.setPractica(new Practica());
+        b.setFecha(LocalDate.of(2026, 9, 1));
+        b.setActividad("Actividad de prueba");
+        b.setHoras(4);
+        b.setValidada(false);
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(b));
+    }
+
+    @Test void evaluacionAceptaLimiteSuperiorDeCien() {
+        Evaluacion e = new Evaluacion();
+        Practica practica = new Practica();
+        practica.setId(1L);
+        e.setPractica(practica);
+        e.setFecha(LocalDate.of(2026, 9, 1));
+        e.setEvaluador("Docente de prueba");
+        e.setCalificacion(new BigDecimal("100"));
+        assertDoesNotThrow(() -> ValidacionDeNegocio.validar(e));
+    }
+
+    @Test void evaluacionRequiereUnaPracticaRegistrada() {
+        Evaluacion e = new Evaluacion();
+        e.setPractica(new Practica());
+        e.setFecha(LocalDate.of(2026, 9, 1));
+        e.setEvaluador("Docente de prueba");
+        e.setCalificacion(new BigDecimal("85"));
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(e));
+    }
+
+    @Test void documentoRequierePracticaRegistrada() {
+        Documento d = new Documento();
+        d.setPractica(new Practica());
+        d.setTipo("Informe final");
+        d.setNombreArchivo("informe.pdf");
+        d.setRutaArchivo("documentos/informe.pdf");
+        d.setFechaEntrega(LocalDate.of(2026, 9, 1));
+        d.setVerificado(false);
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(d));
+    }
+
+    @Test void documentoRequiereDatosObligatorios() {
+        Documento d = new Documento();
+        Practica practica = new Practica();
+        practica.setId(1L);
+        d.setPractica(practica);
+        d.setNombreArchivo("informe.pdf");
+        d.setRutaArchivo("documentos/informe.pdf");
+        d.setFechaEntrega(LocalDate.of(2026, 9, 1));
+        d.setVerificado(false);
+        assertThrows(IllegalArgumentException.class, () -> ValidacionDeNegocio.validar(d));
+    }
+
     private static Empresa empresaValida(String ruc) {
         Empresa empresa = new Empresa();
         empresa.setRuc(ruc);

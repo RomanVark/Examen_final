@@ -88,15 +88,22 @@ public final class ValidacionDeNegocio {
             }
         }
 
+        // Reglas del módulo de seguimiento: cada registro debe apuntar a una práctica persistida.
         if (entity instanceof Bitacora x) {
-            positivo(x.getHoras(), "Las horas");
-            if (x.getHoras() != null && x.getHoras() > 24)
-                throw new IllegalArgumentException("Una bitácora no puede superar 24 horas por día.");
+            validarReferencia(x.getPractica(), "una práctica");
+            if (x.getHoras() == null || x.getHoras() < 1 || x.getHoras() > 24)
+                throw new IllegalArgumentException("Las horas de la bitácora deben estar entre 1 y 24 por día.");
         }
-        if (entity instanceof Evaluacion x && x.getCalificacion() != null &&
-                (x.getCalificacion().compareTo(BigDecimal.ZERO) < 0
-                || x.getCalificacion().compareTo(new BigDecimal("100")) > 0))
-            throw new IllegalArgumentException("La calificación debe estar entre 0 y 100.");
+        if (entity instanceof Evaluacion x) {
+            validarReferencia(x.getPractica(), "una práctica");
+            if (x.getCalificacion() != null &&
+                    (x.getCalificacion().compareTo(BigDecimal.ZERO) < 0
+                    || x.getCalificacion().compareTo(new BigDecimal("100")) > 0))
+                throw new IllegalArgumentException("La calificación debe estar entre 0 y 100.");
+        }
+        if (entity instanceof Documento x) {
+            validarReferencia(x.getPractica(), "una práctica");
+        }
     }
 
     /** Comprueba unicidad de RUC, postulaciones y prácticas por estudiante + oferta. */

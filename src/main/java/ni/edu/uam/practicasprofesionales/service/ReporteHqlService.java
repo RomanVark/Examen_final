@@ -4,7 +4,7 @@ import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 
-/** Cuatro consultas HQL del proyecto; dos corresponden al módulo de asignaciones. */
+/** Consultas HQL del proyecto: reportes de asignaciones y seguimiento. */
 public final class ReporteHqlService {
     public record Reporte(String titulo, List<String> columnas, String hql) {
         @Override public String toString() { return titulo; }
@@ -29,7 +29,12 @@ public final class ReporteHqlService {
             List.of("Estudiante", "Promedio"),
             "select concat(e.nombres, ' ', e.apellidos), avg(ev.calificacion) " +
             "from Evaluacion ev join ev.practica p join p.estudiante e " +
-            "group by e.id, e.nombres, e.apellidos order by e.apellidos")
+            "group by e.id, e.nombres, e.apellidos order by e.apellidos"),
+        new Reporte("Detalle de evaluaciones por práctica",
+            List.of("Práctica", "Estudiante", "Fecha", "Evaluador", "Calificación"),
+            "select p.id, concat(e.nombres, ' ', e.apellidos), ev.fecha, ev.evaluador, ev.calificacion " +
+            "from Evaluacion ev join ev.practica p join p.estudiante e " +
+            "order by ev.fecha desc, p.id")
     );
 
     private ReporteHqlService() { }
