@@ -1,5 +1,6 @@
 package ni.edu.uam.practicasprofesionales.repository;
 
+import ni.edu.uam.practicasprofesionales.model.asignaciones.Practica;
 import ni.edu.uam.practicasprofesionales.model.seguimiento.Bitacora;
 import ni.edu.uam.practicasprofesionales.model.seguimiento.Documento;
 import ni.edu.uam.practicasprofesionales.model.seguimiento.Evaluacion;
@@ -14,7 +15,7 @@ public final class ValidacionSeguimiento {
 
     public static void validar(Bitacora bitacora) {
         if (bitacora == null) throw new IllegalArgumentException("La bitácora es obligatoria.");
-        requerido(bitacora.getPractica() != null, "Seleccione la práctica.");
+        validarPracticaRegistrada(bitacora.getPractica());
         requerido(bitacora.getFecha() != null, "Indique la fecha de la bitácora.");
         texto(bitacora.getActividad(), "Describa la actividad.");
         Integer horas = bitacora.getHoras();
@@ -25,7 +26,7 @@ public final class ValidacionSeguimiento {
 
     public static void validar(Evaluacion evaluacion) {
         if (evaluacion == null) throw new IllegalArgumentException("La evaluación es obligatoria.");
-        requerido(evaluacion.getPractica() != null, "Seleccione la práctica.");
+        validarPracticaRegistrada(evaluacion.getPractica());
         requerido(evaluacion.getFecha() != null, "Indique la fecha de evaluación.");
         texto(evaluacion.getEvaluador(), "Indique el nombre del evaluador.");
         BigDecimal nota = evaluacion.getCalificacion();
@@ -35,12 +36,17 @@ public final class ValidacionSeguimiento {
 
     public static void validar(Documento documento) {
         if (documento == null) throw new IllegalArgumentException("El documento es obligatorio.");
-        requerido(documento.getPractica() != null, "Seleccione la práctica.");
+        validarPracticaRegistrada(documento.getPractica());
         texto(documento.getTipo(), "Seleccione el tipo de documento.");
         texto(documento.getNombreArchivo(), "Indique el nombre del archivo.");
         texto(documento.getRutaArchivo(), "Indique la ruta del archivo.");
         requerido(documento.getFechaEntrega() != null, "Indique la fecha de entrega.");
         requerido(documento.getVerificado() != null, "Indique si el documento fue verificado.");
+    }
+
+    private static void validarPracticaRegistrada(Practica practica) {
+        if (practica == null || practica.getId() == null)
+            throw new IllegalArgumentException("Seleccione una práctica registrada.");
     }
 
     private static void texto(String valor, String mensaje) {

@@ -1,36 +1,41 @@
-# Módulo de seguimiento — Celeste Carrasco
+# Seguimiento — contribución de Celeste Carrasco
 
-Este documento describe exclusivamente la contribución de Celeste al módulo de seguimiento.
+Este módulo registra y consulta el avance de las prácticas profesionales. Se integra con la entidad `Practica` del módulo de asignaciones y utiliza las entidades `Bitacora`, `Evaluacion` y `Documento`.
 
-## Alcance
+## Funcionalidad
 
-- **Bitácora:** registro de actividad por práctica, fecha, horas y estado de validación.
-- **Evaluación:** calificación y observaciones asociadas a una práctica.
-- **Documento:** control de tipo, nombre, ruta, fecha de entrega y verificación.
-- **Reglas de negocio:** horas de bitácora entre 1 y 24; calificación entre 0 y 100; campos obligatorios para documentos.
+- **Bitácora:** fecha, actividad, horas y estado de validación.
+- **Evaluación:** fecha, evaluador, calificación y observaciones.
+- **Documento:** tipo, nombre, ruta, fecha de entrega y verificación.
+- **Validaciones:** la práctica asociada debe estar registrada; las horas deben estar entre 1 y 24; la calificación debe estar entre 0 y 100; los campos requeridos no pueden quedar vacíos.
 - **Reportes HQL:** horas acumuladas por práctica y promedio de evaluación por estudiante.
-- **Exportación:** CSV en UTF-8, con comillas escapadas y encabezados.
+- **Exportación CSV:** archivo UTF-8 con BOM para facilitar la apertura en Excel y escape de comillas.
 
-## Dependencias de integración
+## Integración en la aplicación
 
-Las tres entidades se relacionan con \`Practica\`, que pertenece al módulo de asignaciones. El reporte de horas utiliza \`Practica.bitacoras\`, y el promedio utiliza \`Practica.estudiante\`. Por tanto, las clases de dominio y el mapeo de \`Practica\` deben integrarse antes de ejecutar las pruebas completas.
+Las entidades de seguimiento se administran desde el CRUD general de prácticas. La opción **Seguimiento / Reportes** de la navegación abre la vista de reportes del módulo. El controlador recibe un `EntityManager` para ejecutar las consultas HQL; la sesión se cierra al abandonar la vista o cerrar la aplicación.
 
-El controlador recibe un \`EntityManager\` mediante \`configurar(EntityManager)\`. La aplicación principal debe proporcionarlo al abrir esta vista. No se modificó el arranque general ni los archivos de los otros módulos.
+Las reglas se centralizan en `ValidacionSeguimiento` y se ejecutan desde los callbacks `@PrePersist` y `@PreUpdate` de las tres entidades, además de las validaciones generales del repositorio.
 
-## Ejecución de pruebas
+## Archivos principales
 
-Con las dependencias JPA/JUnit y la entidad \`Practica\` integradas:
+- `model/seguimiento/Bitacora.java`
+- `model/seguimiento/Evaluacion.java`
+- `model/seguimiento/Documento.java`
+- `repository/ValidacionSeguimiento.java`
+- `service/ReporteSeguimientoService.java`
+- `service/ExportadorCsv.java`
+- `controller/SeguimientoReportesController.java`
+- `resources/ni/edu/uam/practicasprofesionales/seguimiento-reportes.fxml`
 
-\`\`\`bash
-mvn -Dtest=ValidacionSeguimientoTest test
-\`\`\`
+## Pruebas
 
-Para crear las tablas de seguimiento, ejecutar \`sql/seguimiento.sql\` después de crear \`practicas\`.
+Ejecutar las pruebas específicas con Maven:
 
-## Pruebas funcionales pendientes de evidencia
+```bash
+mvn -Dtest=ValidacionSeguimientoTest,ExportadorCsvTest test
+```
 
-- Crear bitácoras con 1 y 24 horas; rechazar 0 y 25.
-- Crear evaluaciones con 0 y 100; rechazar valores inferiores o superiores.
-- Rechazar documentos sin tipo, nombre, ruta o fecha.
-- Consultar horas acumuladas y promedios de evaluación con datos reales.
-- Exportar cada reporte a CSV y comprobar encabezados, caracteres especiales y comillas.
+Las pruebas cubren límites de horas, límites de calificación, asociación con una práctica registrada, campos obligatorios de documentos y formato de exportación CSV.
+
+Para preparar la base de datos, ejecutar `sql/seguimiento.sql` después de crear la tabla `practicas`, siguiendo el orden de los scripts SQL del proyecto.
