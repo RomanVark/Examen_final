@@ -19,7 +19,9 @@
         <SplitPane dividerPositions="0.69" styleClass="crud-split">
             <items>
                 <VBox spacing="8" minWidth="390">
-                    <TableView fx:id="tabla" VBox.vgrow="ALWAYS" placeholder="No hay registros; crea uno desde el formulario." />
+                    <TableView fx:id="tabla" VBox.vgrow="ALWAYS" >
+            <placeholder><Label text="No hay registros; crea uno desde el formulario." /></placeholder>
+        </TableView>
                     <Label fx:id="etiquetaCantidad" text="0 registros" styleClass="stat-desc" />
                 </VBox>
                 <VBox spacing="12" minWidth="290" styleClass="form-panel">

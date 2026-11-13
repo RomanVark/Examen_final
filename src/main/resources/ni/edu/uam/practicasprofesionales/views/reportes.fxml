@@ -11,6 +11,8 @@
         <Button text="Ejecutar consulta" onAction="#cargar" styleClass="primary-button" />
         <Button text="Exportar CSV" onAction="#exportarCsv" styleClass="secondary-button" />
     </HBox>
-    <TableView fx:id="tablaReporte" VBox.vgrow="ALWAYS" placeholder="No hay resultados para la consulta seleccionada." />
+    <TableView fx:id="tablaReporte" VBox.vgrow="ALWAYS" >
+            <placeholder><Label text="No hay resultados para la consulta seleccionada." /></placeholder>
+        </TableView>
     <Label fx:id="textoResultado" text="Selecciona una consulta" styleClass="status-note" />
 </VBox>
