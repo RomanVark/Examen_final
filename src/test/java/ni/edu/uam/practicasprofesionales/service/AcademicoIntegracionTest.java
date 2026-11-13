@@ -11,11 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class AcademicoIntegracionTest {
  private AcademicoService servicio=new AcademicoService();
  private void requireDb(){Assumptions.assumeTrue(System.getenv("DB_PASSWORD")!=null,"Configure la base de datos local.");}
+ @org.junit.jupiter.api.AfterAll static void cerrarJpa(){JpaUtil.shutdown();}
  @Test void crudCarreraYEstudiante(){
   requireDb();
   String tag=UUID.randomUUID().toString().substring(0,10).toUpperCase();
   Carrera c=new Carrera();c.setCodigo("T"+tag);c.setNombre("Carrera de prueba");
-  c.setFacultad("Pruebas");
+  c.setFacultad("Pruebas");c.setActiva(true);
   Carrera guardada=null;Estudiante estudiante=null;
   try{
    guardada=servicio.guardar(c);
@@ -25,7 +26,7 @@ class AcademicoIntegracionTest {
    Long carreraId=guardada.getId();
    assertTrue(servicio.carreras().stream().anyMatch(x->x.getId().equals(carreraId)&&x.getNombre().equals("Carrera editada")));
    Estudiante e=new Estudiante();e.setCarnet("T-"+tag);e.setNombres("Persona");
-   e.setApellidos("Prueba");e.setCorreo("t"+tag.toLowerCase()+"@demo.example");e.setCarrera(guardada);
+   e.setApellidos("Prueba");e.setCorreo("t"+tag.toLowerCase()+"@demo.example");e.setCarrera(guardada);e.setActivo(true);
    estudiante=servicio.guardar(e);
    assertNotNull(estudiante.getId());
    Long estudianteId=estudiante.getId();
@@ -33,25 +34,23 @@ class AcademicoIntegracionTest {
   }finally{
    if(estudiante!=null)servicio.eliminarEstudiante(estudiante.getId());
    if(guardada!=null)servicio.eliminarCarrera(guardada.getId());
-   JpaUtil.close();
   }
  }
  @Test void crudTutorYCorreoUnico(){
   requireDb();
   String tag=UUID.randomUUID().toString().substring(0,10).toLowerCase();
   TutorAcademico t=new TutorAcademico();t.setNombres("Tutor");
-  t.setApellidos("Prueba");t.setCorreo("tutor-"+tag+"@demo.example");t.setEspecialidad("Ingeniería");
+  t.setApellidos("Prueba");t.setCorreo("tutor-"+tag+"@demo.example");t.setEspecialidad("Ingeniería");t.setActivo(true);
   TutorAcademico guardado=null;
   try{
    guardado=servicio.guardar(t);assertNotNull(guardado.getId());
    guardado.setEspecialidad("Gestión");guardado=servicio.guardar(guardado);
    assertTrue(servicio.buscarTutores("tutor-"+tag).stream().anyMatch(x->x.getEspecialidad().equals("Gestión")));
    TutorAcademico duplicado=new TutorAcademico();duplicado.setNombres("Otro");
-   duplicado.setApellidos("Tutor");duplicado.setCorreo(t.getCorreo());duplicado.setEspecialidad("Pruebas");
+   duplicado.setApellidos("Tutor");duplicado.setCorreo(t.getCorreo());duplicado.setEspecialidad("Pruebas");duplicado.setActivo(true);
    assertThrows(IllegalArgumentException.class,()->servicio.guardar(duplicado));
   }finally{
    if(guardado!=null)servicio.eliminarTutor(guardado.getId());
-   JpaUtil.close();
   }
  }
 }

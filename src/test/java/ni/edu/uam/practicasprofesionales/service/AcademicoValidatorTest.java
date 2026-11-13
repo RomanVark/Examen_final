@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class AcademicoValidatorTest {
  private Carrera carrera(){
   Carrera c=new Carrera();c.setId(1L);c.setCodigo("SIS");c.setNombre("Sistemas");
-  c.setFacultad("Tecnología");return c;
+  c.setFacultad("Tecnología");c.setActiva(true);return c;
  }
  private Estudiante estudiante(){
   Estudiante e=new Estudiante();e.setCarnet("2026-001");e.setNombres("Ana");
-  e.setApellidos("López");e.setCorreo("ana@demo.example");e.setCarrera(carrera());return e;
+  e.setApellidos("López");e.setCorreo("ana@demo.example");e.setCarrera(carrera());e.setActivo(true);return e;
  }
  @Test void rechazaCarnetInvalido(){
   Estudiante e=estudiante();e.setCarnet("@");
