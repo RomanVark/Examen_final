@@ -1,6 +1,7 @@
 package ni.edu.uam.practicasprofesionales.app;
 
 import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
+import ni.edu.uam.practicasprofesionales.controller.PrincipalController;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +18,11 @@ public class PracticasProfesionalesApplication extends Application {
         stage.setScene(scene);
         stage.setMinWidth(1080);
         stage.setMinHeight(680);
-        stage.setOnCloseRequest(e -> JpaUtil.shutdown());
+        stage.setOnCloseRequest(e -> {
+            PrincipalController controlador = loader.getController();
+            controlador.cerrar();
+            JpaUtil.shutdown();
+        });
         stage.show();
     }
     @Override public void stop() { JpaUtil.shutdown(); }

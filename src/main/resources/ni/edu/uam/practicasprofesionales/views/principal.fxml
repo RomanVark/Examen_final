@@ -13,9 +13,11 @@
             <Label text="GESTIÓN UNIVERSITARIA" styleClass="sidebar-caption"/>
             <Separator />
             <Button text="  Inicio / Resumen" onAction="#mostrarInicio" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Módulo académico" onAction="#mostrarAcademico" maxWidth="Infinity" styleClass="nav-button" />
             <Button text="  Catálogos" onAction="#mostrarCatalogos" maxWidth="Infinity" styleClass="nav-button" />
             <Button text="  Gestión de prácticas" onAction="#mostrarOperaciones" maxWidth="Infinity" styleClass="nav-button" />
             <Button text="  Reportes HQL" onAction="#mostrarReportes" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Seguimiento / Reportes" onAction="#mostrarSeguimiento" maxWidth="Infinity" styleClass="nav-button" />
             <Region VBox.vgrow="ALWAYS"/>
             <Label text="Java 21 · JavaFX · Hibernate" styleClass="sidebar-footnote" />
             <Label text="PostgreSQL · Maven" styleClass="sidebar-footnote" />
