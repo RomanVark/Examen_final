@@ -27,16 +27,16 @@ public final class AcademicoController {
   columna(tablaCarreras,"Código",Carrera::getCodigo);
   columna(tablaCarreras,"Carrera",Carrera::getNombre);
   columna(tablaCarreras,"Facultad",Carrera::getFacultad);
-  columna(tablaCarreras,"Activa",c->c.isActiva()?"Sí":"No");
+  columna(tablaCarreras,"Activa",c->Boolean.TRUE.equals(c.getActiva())?"Sí":"No");
   columna(tablaEstudiantes,"Carné",Estudiante::getCarnet);
   columna(tablaEstudiantes,"Estudiante",e->e.getNombres()+" "+e.getApellidos());
   columna(tablaEstudiantes,"Correo",Estudiante::getCorreo);
   columna(tablaEstudiantes,"Carrera",e->e.getCarrera().getNombre());
-  columna(tablaEstudiantes,"Activo",e->e.isActivo()?"Sí":"No");
+  columna(tablaEstudiantes,"Activo",e->Boolean.TRUE.equals(e.getActivo())?"Sí":"No");
   columna(tablaTutores,"Tutor",t->t.getNombres()+" "+t.getApellidos());
   columna(tablaTutores,"Correo",TutorAcademico::getCorreo);
   columna(tablaTutores,"Especialidad",TutorAcademico::getEspecialidad);
-  columna(tablaTutores,"Activo",t->t.isActivo()?"Sí":"No");
+  columna(tablaTutores,"Activo",t->Boolean.TRUE.equals(t.getActivo())?"Sí":"No");
   tablaCarreras.getSelectionModel().selectedItemProperty().addListener((o,old,v)->{if(v!=null)editarCarrera(v);});
   tablaEstudiantes.getSelectionModel().selectedItemProperty().addListener((o,old,v)->{if(v!=null)editarEstudiante(v);});
   tablaTutores.getSelectionModel().selectedItemProperty().addListener((o,old,v)->{if(v!=null)editarTutor(v);});
@@ -69,7 +69,7 @@ public final class AcademicoController {
  }
  private void editarCarrera(Carrera c){
   carreraCodigo.setText(c.getCodigo());carreraNombre.setText(c.getNombre());
-  carreraFacultad.setText(c.getFacultad());carreraActiva.setSelected(c.isActiva());
+  carreraFacultad.setText(c.getFacultad());carreraActiva.setSelected(Boolean.TRUE.equals(c.getActiva()));
  }
  private void editarEstudiante(Estudiante e){
   estudianteCarnet.setText(e.getCarnet());estudianteNombres.setText(e.getNombres());
@@ -77,12 +77,12 @@ public final class AcademicoController {
   estudianteTelefono.setText(e.getTelefono());
   estudianteCarrera.getItems().stream().filter(c->c.getId().equals(e.getCarrera().getId()))
     .findFirst().ifPresent(estudianteCarrera::setValue);
-  estudianteActivo.setSelected(e.isActivo());
+  estudianteActivo.setSelected(Boolean.TRUE.equals(e.getActivo()));
  }
  private void editarTutor(TutorAcademico t){
   tutorNombres.setText(t.getNombres());tutorApellidos.setText(t.getApellidos());
   tutorCorreo.setText(t.getCorreo());tutorEspecialidad.setText(t.getEspecialidad());
-  tutorActivo.setSelected(t.isActivo());
+  tutorActivo.setSelected(Boolean.TRUE.equals(t.getActivo()));
  }
  @FXML private void guardarCarrera(){
   try{

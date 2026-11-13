@@ -33,7 +33,7 @@ public final class AcademicoValidator {
   e.setCorreo(correo(e.getCorreo()));
   if(e.getCarrera()==null || e.getCarrera().getId()==null)throw new IllegalArgumentException("Seleccione una carrera existente.");
   if(e.getTelefono()!=null&&e.getTelefono().length()>150)throw new IllegalArgumentException("Teléfono demasiado largo.");
-  if(!e.getCarrera().isActiva()&&e.isActivo())throw new IllegalArgumentException("No puede activar un estudiante de carrera inactiva.");
+  if(!Boolean.TRUE.equals(e.getCarrera().getActiva())&&Boolean.TRUE.equals(e.getActivo()))throw new IllegalArgumentException("No puede activar un estudiante de carrera inactiva.");
  }
  public static void validarTutor(TutorAcademico t){
   t.setNombres(requerido(t.getNombres(),"Nombres del tutor"));
