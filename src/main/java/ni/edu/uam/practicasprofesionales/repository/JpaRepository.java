@@ -38,7 +38,7 @@ public class JpaRepository<T> {
                 if (tx.isActive()) tx.rollback();
                 throw new IllegalStateException("No fue posible guardar. Verifique campos únicos y relaciones. Detalle: " + ex.getMessage(), ex);
             }
-        } catch (ReflectiveOperationException ex) { throw new IllegalStateException("Entidad sin getId: " + type, ex); }
+        }
     }
 
     public void delete(Long id) {
