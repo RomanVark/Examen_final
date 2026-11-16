@@ -5,6 +5,7 @@ module ni.edu.uam.practicasprofesionales {
     requires org.hibernate.orm.core;
     requires org.postgresql.jdbc;
     requires java.sql;
+    requires java.net.http;
     requires java.naming;
     requires java.logging;
 
