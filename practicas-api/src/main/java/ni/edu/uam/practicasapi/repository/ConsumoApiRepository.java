@@ -11,7 +11,7 @@ public interface ConsumoApiRepository extends JpaRepository<ConsumoApi, Long> {
         SELECT metodo, ruta, COUNT(*) AS total,
                SUM(CASE WHEN codigo_http < 400 THEN 1 ELSE 0 END) AS exitosas,
                SUM(CASE WHEN codigo_http >= 400 THEN 1 ELSE 0 END) AS errores,
-               ROUND(AVG(duracion_ms)::numeric, 2) AS promedio_ms
+               ROUND(CAST(AVG(duracion_ms) AS NUMERIC), 2) AS promedio_ms
         FROM api_consumos WHERE instante >= :desde
         GROUP BY metodo, ruta ORDER BY total DESC
         """, nativeQuery = true)

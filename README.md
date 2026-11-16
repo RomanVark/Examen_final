@@ -64,3 +64,31 @@
    Las pruebas que interactúan con PostgreSQL requieren la base y las variables de conexión configuradas. Si aparece **Unable to build Hibernate SessionFactory**, revisa la causa detallada **Caused by:** en la consola de IntelliJ, las credenciales, el nombre de la base y el esquema de las doce tablas.
 
 9. **Editar las pantallas (opcional):** abrir los archivos FXML de **src/main/resources/ni/edu/uam/practicasprofesionales/** con Scene Builder. El diseño CSS se encuentra en la carpeta **styles**. Los campos del CRUD genérico se generan dinámicamente desde Java.
+
+10. **Instalar las tablas para la API REST:** estando conectado a practicas_profesionales en pgAdmin, ejecutar **sql/04_api_consumo.sql**. Añade una tabla de estadísticas sin modificar las doce existentes. La API utiliza el mismo PostgreSQL que JavaFX y valida el esquema al arrancar.
+
+11. **Iniciar el backend Spring Boot:** desde la raíz del repositorio, en una segunda terminal PowerShell configurar las mismas variables DB_URL, DB_USER y DB_PASSWORD del paso 5. Después ejecutar:
+
+    ~~~powershell
+    .\mvnw.cmd -f practicas-api/pom.xml clean test
+    .\mvnw.cmd -f practicas-api/pom.xml spring-boot:run
+    ~~~
+
+    La API se escucha **solo en 127.0.0.1:8080**. Si necesitas otro puerto, define la variable API_PORT antes de iniciarla. Para trabajar desde IntelliJ, importa también **practicas-api/pom.xml** como un segundo proyecto Maven.
+
+12. **Probar los endpoints:** abrir **http://127.0.0.1:8080/swagger-ui.html** para usar Swagger y consultar estas rutas:
+
+    ~~~text
+    GET http://127.0.0.1:8080/actuator/health
+    GET http://127.0.0.1:8080/api/estudiantes
+    GET http://127.0.0.1:8080/api/estudiantes/1
+    GET http://127.0.0.1:8080/api/empresas
+    GET http://127.0.0.1:8080/api/practicas
+    GET http://127.0.0.1:8080/api/reportes/consumo?dias=7
+    ~~~
+
+    Las listas admiten los parámetros pagina (desde 0) y tamano (de 1 a 100). Los endpoints son **solo de lectura** en esta primera etapa. El registro de métricas conserva método HTTP, ruta normalizada, estado y duración, pero no contraseñas, parámetros ni cuerpo de las peticiones.
+
+13. **Probar el consumo desde JavaFX:** con la API ejecutándose, iniciar la aplicación de escritorio con .\mvnw.cmd javafx:run, entrar a **Consumo API REST** y pulsar **Estudiantes**, **Empresas** o **Prácticas**. Después pulsar **Reporte de consumo** para ver las solicitudes registradas en JSON. Swagger y Actuator también están disponibles directamente en el navegador.
+
+    **Alcance de esta etapa:** el CRUD actual de JavaFX continúa consultando JPA directamente; la nueva pantalla demuestra el consumo REST. No se han migrado todavía las operaciones de escritura ni se ha agregado JasperReports. Ambos proyectos deben ejecutarse de forma separada.
