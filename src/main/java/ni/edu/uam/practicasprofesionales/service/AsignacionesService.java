@@ -1,7 +1,7 @@
 package ni.edu.uam.practicasprofesionales.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import ni.edu.uam.practicasprofesionales.model.academico.TutorAcademico;
 import ni.edu.uam.practicasprofesionales.model.alianzas.SupervisorEmpresa;
 import ni.edu.uam.practicasprofesionales.model.asignaciones.OfertaPractica;
@@ -10,7 +10,7 @@ import ni.edu.uam.practicasprofesionales.model.asignaciones.Practica;
 import ni.edu.uam.practicasprofesionales.model.enums.EstadoOferta;
 import ni.edu.uam.practicasprofesionales.model.enums.EstadoPostulacion;
 import ni.edu.uam.practicasprofesionales.model.enums.EstadoPractica;
-import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
+import ni.edu.uam.practicasprofesionales.persistence.HibernateUtil;
 import ni.edu.uam.practicasprofesionales.repository.ValidacionDeNegocio;
 
 /**
@@ -24,10 +24,9 @@ public class AsignacionesService {
         if (postulacionId == null || tutorId == null || supervisorId == null)
             throw new IllegalArgumentException("Debe indicar postulación, tutor y supervisor.");
 
-        try (EntityManager em = JpaUtil.open()) {
-            EntityTransaction tx = em.getTransaction();
+        try (Session em = HibernateUtil.openSession()) {
+            Transaction tx = em.beginTransaction();
             try {
-                tx.begin();
 
                 Postulacion postulacion = em.find(Postulacion.class, postulacionId);
                 if (postulacion == null) throw new IllegalArgumentException("La postulación no existe.");

@@ -1,15 +1,15 @@
 package ni.edu.uam.practicasprofesionales.service;
 
-import jakarta.persistence.EntityManager;
 import ni.edu.uam.practicasprofesionales.model.academico.*;
-import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
 import ni.edu.uam.practicasprofesionales.repository.JpaRepository;
+import ni.edu.uam.practicasprofesionales.repository.AcademicoDao;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 /** Casos de uso académicos: CRUD, integridad y dos consultas HQL con JOIN. */
 public final class AcademicoService {
+ private final AcademicoDao consultas = new AcademicoDao();
  private final JpaRepository<Carrera> carreraRepo = new JpaRepository<>(Carrera.class);
  private final JpaRepository<Estudiante> estudianteRepo = new JpaRepository<>(Estudiante.class);
  private final JpaRepository<TutorAcademico> tutorRepo = new JpaRepository<>(TutorAcademico.class);
@@ -39,29 +39,9 @@ public final class AcademicoService {
  public void eliminarCarrera(Long id){carreraRepo.delete(id);}
  public void eliminarEstudiante(Long id){estudianteRepo.delete(id);}
  public void eliminarTutor(Long id){tutorRepo.delete(id);}
- /** HQL 1: filtra estudiantes con JOIN a Carrera para acceder al nombre. */
- public List<Estudiante> buscarEstudiantes(String termino){
-  EntityManager em=JpaUtil.open();
-  try{
-   return em.createQuery("select e from Estudiante e join fetch e.carrera c "+
-      "where lower(e.carnet) like :busca or lower(e.nombres) like :busca "+
-      "or lower(e.apellidos) like :busca or lower(c.nombre) like :busca "+
-      "order by e.apellidos,e.nombres",Estudiante.class)
-     .setParameter("busca","%"+termino.strip().toLowerCase(Locale.ROOT)+"%").getResultList();
-  }finally{em.close();}
- }
- public List<TutorAcademico> buscarTutores(String termino){
-  EntityManager em=JpaUtil.open();
-  try{return em.createQuery("select t from TutorAcademico t where lower(t.nombres) like :q "+
-   "or lower(t.apellidos) like :q or lower(t.correo) like :q order by t.apellidos",TutorAcademico.class)
-    .setParameter("q","%"+termino.strip().toLowerCase(Locale.ROOT)+"%").getResultList();
-  }finally{em.close();}
- }
- /** HQL 2: agrupación con LEFT JOIN, muestra incluso carreras sin estudiantes. */
- public List<Object[]> estudiantesPorCarrera(){
-  EntityManager em=JpaUtil.open();
-  try{return em.createQuery("select c.nombre, count(e.id) from Carrera c "+
-    "left join c.estudiantes e group by c.id,c.nombre order by c.nombre",Object[].class).getResultList();}
-  finally{em.close();}
- }
+ /** Consulta HQL con parámetro y JOIN FETCH, ejecutada por el DAO nativo. */
+ public List<Estudiante> buscarEstudiantes(String termino) { return consultas.buscarEstudiantes(termino); }
+ public List<TutorAcademico> buscarTutores(String termino) { return consultas.buscarTutores(termino); }
+ /** Consulta HQL de agregación con GROUP BY. */
+ public List<Object[]> estudiantesPorCarrera() { return consultas.estudiantesPorCarrera(); }
 }

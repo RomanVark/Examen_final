@@ -1,6 +1,6 @@
 package ni.edu.uam.practicasprofesionales.app;
 
-import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
+import ni.edu.uam.practicasprofesionales.persistence.HibernateUtil;
 import ni.edu.uam.practicasprofesionales.controller.PrincipalController;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
 import javafx.application.Application;
@@ -21,10 +21,10 @@ public class PracticasProfesionalesApplication extends Application {
         stage.setOnCloseRequest(e -> {
             PrincipalController controlador = loader.getController();
             controlador.cerrar();
-            JpaUtil.shutdown();
+            HibernateUtil.cerrar();
         });
         stage.show();
     }
-    @Override public void stop() { JpaUtil.shutdown(); }
+    @Override public void stop() { HibernateUtil.cerrar(); }
     public static void main(String[] args) { launch(args); }
 }

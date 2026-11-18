@@ -1,6 +1,6 @@
 package ni.edu.uam.practicasprofesionales.service;
 
-import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +43,7 @@ public final class ReporteSeguimientoService {
 
     private ReporteSeguimientoService() { }
 
-    public static List<Object[]> ejecutar(EntityManager entityManager, Reporte reporte) {
+    public static List<Object[]> ejecutar(Session entityManager, Reporte reporte) {
         if (entityManager == null)
             throw new IllegalArgumentException("La conexión de persistencia no está disponible.");
         if (reporte == null) throw new IllegalArgumentException("Seleccione un reporte.");

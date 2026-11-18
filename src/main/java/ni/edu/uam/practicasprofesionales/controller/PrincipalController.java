@@ -1,7 +1,7 @@
 package ni.edu.uam.practicasprofesionales.controller;
 
-import jakarta.persistence.EntityManager;
-import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
+import org.hibernate.Session;
+import ni.edu.uam.practicasprofesionales.persistence.HibernateUtil;
 import ni.edu.uam.practicasprofesionales.ui.Grupo;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
 import javafx.fxml.FXML;
@@ -14,7 +14,7 @@ import javafx.scene.layout.StackPane;
 public class PrincipalController {
     @FXML private StackPane areaContenido;
     @FXML private Label seccionActual;
-    private EntityManager sesionSeguimiento;
+    private Session sesionSeguimiento;
 
     @FXML public void initialize() { mostrarInicio(); }
     @FXML public void mostrarInicio() { cargar("inicio.fxml", "Resumen general", null); }
@@ -38,7 +38,7 @@ public class PrincipalController {
     }
 
     private void cargar(String archivo, String titulo, Grupo grupo) {
-        EntityManager nuevaSesion = null;
+        Session nuevaSesion = null;
         try {
             String recurso = archivo.startsWith("/") ? archivo :
                 "/ni/edu/uam/practicasprofesionales/views/" + archivo;
@@ -49,7 +49,7 @@ public class PrincipalController {
             Object controlador = loader.getController();
             if (grupo != null) ((CrudController) controlador).configurar(grupo);
             if (controlador instanceof SeguimientoReportesController seguimiento) {
-                nuevaSesion = JpaUtil.open();
+                nuevaSesion = HibernateUtil.openSession();
                 seguimiento.configurar(nuevaSesion);
             }
             areaContenido.getChildren().setAll(vista);

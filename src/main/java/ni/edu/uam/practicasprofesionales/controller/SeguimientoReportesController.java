@@ -1,6 +1,6 @@
 package ni.edu.uam.practicasprofesionales.controller;
 
-import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -22,10 +22,10 @@ public class SeguimientoReportesController {
     @FXML private ComboBox<ReporteSeguimientoService.Reporte> selectorReporte;
     @FXML private TableView<List<String>> tablaReporte;
     @FXML private Label textoResultado;
-    private EntityManager entityManager;
+    private Session entityManager;
     private List<List<String>> filasActuales = new ArrayList<>();
 
-    public void configurar(EntityManager entityManager) {
+    public void configurar(Session entityManager) {
         this.entityManager = entityManager;
         if (selectorReporte != null && selectorReporte.getValue() != null) cargarReporte();
     }

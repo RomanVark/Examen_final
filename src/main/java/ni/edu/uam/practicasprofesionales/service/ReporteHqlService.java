@@ -1,7 +1,7 @@
 package ni.edu.uam.practicasprofesionales.service;
 
-import ni.edu.uam.practicasprofesionales.persistence.JpaUtil;
-import jakarta.persistence.EntityManager;
+import ni.edu.uam.practicasprofesionales.persistence.HibernateUtil;
+import org.hibernate.Session;
 import java.util.List;
 
 /** Cuatro consultas HQL del proyecto; dos corresponden al módulo de asignaciones. */
@@ -35,7 +35,7 @@ public final class ReporteHqlService {
     private ReporteHqlService() { }
 
     public static List<Object[]> ejecutar(Reporte reporte) {
-        try (EntityManager em = JpaUtil.open()) {
+        try (Session em = HibernateUtil.openSession()) {
             return em.createQuery(reporte.hql(), Object[].class).getResultList();
         }
     }
