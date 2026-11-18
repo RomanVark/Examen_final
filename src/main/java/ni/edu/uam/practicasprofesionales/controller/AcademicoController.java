@@ -6,11 +6,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import ni.edu.uam.practicasprofesionales.model.academico.*;
 import ni.edu.uam.practicasprofesionales.service.AcademicoService;
+import ni.edu.uam.practicasprofesionales.util.FxDb;
 import java.util.function.Function;
 
 /** Controlador de tres CRUD académicos; formulario y tabla desacoplados de Hibernate. */
 public final class AcademicoController {
  private final AcademicoService service=new AcademicoService();
+ private long revisionCarreras, revisionEstudiantes, revisionTutores;
  @FXML private TableView<Carrera> tablaCarreras;
  @FXML private TableView<Estudiante> tablaEstudiantes;
  @FXML private TableView<TutorAcademico> tablaTutores;
@@ -51,21 +53,31 @@ public final class AcademicoController {
   tabla.getColumns().add(col);
  }
  @FXML private void recargar(){
-  try{
-   tablaCarreras.setItems(FXCollections.observableArrayList(service.carreras()));
-   estudianteCarrera.setItems(FXCollections.observableArrayList(service.carreras()));
+  long revision=++revisionCarreras;
+  FxDb.ejecutar(() -> service.carreras(), carreras -> {
+   if(revision!=revisionCarreras)return;
+   tablaCarreras.setItems(FXCollections.observableArrayList(carreras));
+   estudianteCarrera.setItems(FXCollections.observableArrayList(carreras));
    cargarEstudiantes();
    cargarTutores();
    estado.setText("Módulo académico actualizado.");
-  }catch(Exception e){error(e);}
+  },this::error);
  }
  private void cargarEstudiantes(){
-  try{tablaEstudiantes.setItems(FXCollections.observableArrayList(service.buscarEstudiantes(buscarEstudiante.getText()==null?"":buscarEstudiante.getText())));}
-  catch(Exception e){error(e);}
+  String filtro=buscarEstudiante.getText()==null?"":buscarEstudiante.getText();
+  long revision=++revisionEstudiantes;
+  FxDb.ejecutar(() -> service.buscarEstudiantes(filtro), estudiantes -> {
+   if(revision!=revisionEstudiantes)return;
+   tablaEstudiantes.setItems(FXCollections.observableArrayList(estudiantes));
+  },this::error);
  }
  private void cargarTutores(){
-  try{tablaTutores.setItems(FXCollections.observableArrayList(service.buscarTutores(buscarTutor.getText()==null?"":buscarTutor.getText())));}
-  catch(Exception e){error(e);}
+  String filtro=buscarTutor.getText()==null?"":buscarTutor.getText();
+  long revision=++revisionTutores;
+  FxDb.ejecutar(() -> service.buscarTutores(filtro), tutores -> {
+   if(revision!=revisionTutores)return;
+   tablaTutores.setItems(FXCollections.observableArrayList(tutores));
+  },this::error);
  }
  private void editarCarrera(Carrera c){
   carreraCodigo.setText(c.getCodigo());carreraNombre.setText(c.getNombre());
@@ -85,52 +97,61 @@ public final class AcademicoController {
   tutorActivo.setSelected(Boolean.TRUE.equals(t.getActivo()));
  }
  @FXML private void guardarCarrera(){
-  try{
-   Carrera c=tablaCarreras.getSelectionModel().getSelectedItem();
-   if(c==null)c=new Carrera();
-   c.setCodigo(carreraCodigo.getText());c.setNombre(carreraNombre.getText());
-   c.setFacultad(carreraFacultad.getText());c.setActiva(carreraActiva.isSelected());
-   service.guardar(c);limpiarCarrera();recargar();estado.setText("Carrera guardada.");
-  }catch(Exception ex){error(ex);}
+  Carrera c=tablaCarreras.getSelectionModel().getSelectedItem();
+  if(c==null)c=new Carrera();
+  c.setCodigo(carreraCodigo.getText());c.setNombre(carreraNombre.getText());
+  c.setFacultad(carreraFacultad.getText());c.setActiva(carreraActiva.isSelected());
+  final Carrera guardar=c;
+  FxDb.ejecutar(() -> service.guardar(guardar), resultado -> {
+   limpiarCarrera();recargar();estado.setText("Carrera guardada.");
+  },this::error);
  }
  @FXML private void guardarEstudiante(){
-  try{
-   Estudiante e=tablaEstudiantes.getSelectionModel().getSelectedItem();
-   if(e==null)e=new Estudiante();
-   e.setCarnet(estudianteCarnet.getText());e.setNombres(estudianteNombres.getText());
-   e.setApellidos(estudianteApellidos.getText());e.setCorreo(estudianteCorreo.getText());
-   e.setTelefono(estudianteTelefono.getText());e.setCarrera(estudianteCarrera.getValue());
-   e.setActivo(estudianteActivo.isSelected());
-   service.guardar(e);limpiarEstudiante();recargar();estado.setText("Estudiante guardado.");
-  }catch(Exception ex){error(ex);}
+  Estudiante e=tablaEstudiantes.getSelectionModel().getSelectedItem();
+  if(e==null)e=new Estudiante();
+  e.setCarnet(estudianteCarnet.getText());e.setNombres(estudianteNombres.getText());
+  e.setApellidos(estudianteApellidos.getText());e.setCorreo(estudianteCorreo.getText());
+  e.setTelefono(estudianteTelefono.getText());e.setCarrera(estudianteCarrera.getValue());
+  e.setActivo(estudianteActivo.isSelected());
+  final Estudiante guardar=e;
+  FxDb.ejecutar(() -> service.guardar(guardar), resultado -> {
+   limpiarEstudiante();recargar();estado.setText("Estudiante guardado.");
+  },this::error);
  }
  @FXML private void guardarTutor(){
-  try{
-   TutorAcademico t=tablaTutores.getSelectionModel().getSelectedItem();
-   if(t==null)t=new TutorAcademico();
-   t.setNombres(tutorNombres.getText());t.setApellidos(tutorApellidos.getText());
-   t.setCorreo(tutorCorreo.getText());t.setEspecialidad(tutorEspecialidad.getText());
-   t.setActivo(tutorActivo.isSelected());
-   service.guardar(t);limpiarTutor();recargar();estado.setText("Tutor guardado.");
-  }catch(Exception ex){error(ex);}
+  TutorAcademico t=tablaTutores.getSelectionModel().getSelectedItem();
+  if(t==null)t=new TutorAcademico();
+  t.setNombres(tutorNombres.getText());t.setApellidos(tutorApellidos.getText());
+  t.setCorreo(tutorCorreo.getText());t.setEspecialidad(tutorEspecialidad.getText());
+  t.setActivo(tutorActivo.isSelected());
+  final TutorAcademico guardar=t;
+  FxDb.ejecutar(() -> service.guardar(guardar), resultado -> {
+   limpiarTutor();recargar();estado.setText("Tutor guardado.");
+  },this::error);
  }
  @FXML private void eliminarCarrera(){
   Carrera c=tablaCarreras.getSelectionModel().getSelectedItem();
-  if(c==null)return;
-  if(!confirmar("Eliminar carrera",c.toString()))return;
-  try{service.eliminarCarrera(c.getId());limpiarCarrera();recargar();}catch(Exception e){error(e);}
+  if(c==null||!confirmar("Eliminar carrera",c.toString()))return;
+  Long id=c.getId();
+  FxDb.ejecutar(() -> {service.eliminarCarrera(id);return null;}, resultado -> {
+   limpiarCarrera();recargar();
+  },this::error);
  }
  @FXML private void eliminarEstudiante(){
   Estudiante e=tablaEstudiantes.getSelectionModel().getSelectedItem();
-  if(e==null)return;
-  if(!confirmar("Eliminar estudiante",e.toString()))return;
-  try{service.eliminarEstudiante(e.getId());limpiarEstudiante();recargar();}catch(Exception ex){error(ex);}
+  if(e==null||!confirmar("Eliminar estudiante",e.toString()))return;
+  Long id=e.getId();
+  FxDb.ejecutar(() -> {service.eliminarEstudiante(id);return null;}, resultado -> {
+   limpiarEstudiante();recargar();
+  },this::error);
  }
  @FXML private void eliminarTutor(){
   TutorAcademico t=tablaTutores.getSelectionModel().getSelectedItem();
-  if(t==null)return;
-  if(!confirmar("Eliminar tutor",t.toString()))return;
-  try{service.eliminarTutor(t.getId());limpiarTutor();recargar();}catch(Exception ex){error(ex);}
+  if(t==null||!confirmar("Eliminar tutor",t.toString()))return;
+  Long id=t.getId();
+  FxDb.ejecutar(() -> {service.eliminarTutor(id);return null;}, resultado -> {
+   limpiarTutor();recargar();
+  },this::error);
  }
  @FXML private void limpiarCarrera(){
   tablaCarreras.getSelectionModel().clearSelection();
@@ -151,7 +172,7 @@ public final class AcademicoController {
   alerta.setTitle(titulo);
   return alerta.showAndWait().orElse(ButtonType.NO)==ButtonType.YES;
  }
- private void error(Exception e){
+ private void error(Throwable e){
   Throwable t=e;
   while(t.getCause()!=null)t=t.getCause();
   estado.setText("Error: "+t.getMessage());
