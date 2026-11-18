@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Las credenciales se cargan en HibernateUtil mediante variables de entorno. -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.jdbc.time_zone">UTC</property>
+        <property name="hibernate.jdbc.batch_size">25</property>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.academico.Carrera"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.academico.Estudiante"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.academico.TutorAcademico"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.alianzas.Empresa"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.alianzas.SupervisorEmpresa"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.alianzas.Convenio"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.asignaciones.OfertaPractica"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.asignaciones.Postulacion"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.asignaciones.Practica"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.seguimiento.Bitacora"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.seguimiento.Evaluacion"/>
+        <mapping class="ni.edu.uam.practicasprofesionales.model.seguimiento.Documento"/>
+    </session-factory>
+</hibernate-configuration>

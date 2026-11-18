@@ -7,6 +7,7 @@ import ni.edu.uam.practicasprofesionales.ui.EntityDefinition;
 import ni.edu.uam.practicasprofesionales.ui.FieldSpec;
 import ni.edu.uam.practicasprofesionales.ui.Grupo;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
+import ni.edu.uam.practicasprofesionales.util.FxDb;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -38,6 +39,7 @@ public class CrudController {
     private Object editando;
     private final Map<String, Control> controles = new HashMap<>();
     private List<Object> todos = List.of();
+    private long revisionListado;
 
     @FXML public void initialize() {
         filtro.textProperty().addListener((obs, oldText, newText) -> aplicarFiltro());
@@ -117,18 +119,34 @@ public class CrudController {
             return c;
         }
         if (!tipo.getName().startsWith("java.")) {
-            List<Object> opciones = new ArrayList<>(listado(tipo));
-            ComboBox<Object> c = new ComboBox<>(FXCollections.observableArrayList(opciones));
-            c.setPromptText("Selecciona " + campo.label().toLowerCase());
+            ComboBox<Object> c = new ComboBox<>();
+            c.setDisable(true);
+            c.setPromptText("Cargando " + campo.label().toLowerCase() + "...");
             if (tipo == Empresa.class) {
-                opciones.sort(Comparator.comparing(Object::toString, String.CASE_INSENSITIVE_ORDER));
-                c.setItems(FXCollections.observableArrayList(opciones));
-                c.setPromptText("Selecciona una empresa");
                 c.setVisibleRowCount(8);
                 c.getStyleClass().add("company-selector");
                 c.setCellFactory(lista -> crearCeldaEmpresa());
                 c.setButtonCell(crearCeldaEmpresa());
             }
+            FxDb.ejecutar(() -> {
+                List<Object> opciones = new ArrayList<>();
+                opciones.addAll(listado(tipo));
+                if (tipo == Empresa.class) {
+                    opciones.sort(Comparator.comparing(Object::toString, String.CASE_INSENSITIVE_ORDER));
+                }
+                return opciones;
+            }, opciones -> {
+                c.setItems(FXCollections.observableArrayList(opciones));
+                c.setDisable(false);
+                c.setPromptText("Selecciona " + campo.label().toLowerCase());
+                if (c.getUserData() instanceof Long id) {
+                    c.getItems().stream().filter(x -> Objects.equals(valor(x, "id"), id))
+                        .findFirst().ifPresent(c::setValue);
+                }
+            }, error -> {
+                c.setDisable(false);
+                etiquetaAyuda.setText("No se pudieron cargar las opciones: " + error.getMessage());
+            });
             return c;
         }
         if (campo.name().equals("observaciones") || campo.name().equals("descripcion") || campo.name().equals("actividad")) {
@@ -159,6 +177,7 @@ public class CrudController {
                 Object elegido = valor;
                 if (valor != null && !valor.getClass().isEnum()) {
                     Long id = (Long) valor(valor, "id");
+                    combo.setUserData(id);
                     elegido = combo.getItems().stream()
                         .filter(item -> Objects.equals(valor(item, "id"), id)).findFirst().orElse(null);
                 }
@@ -180,37 +199,66 @@ public class CrudController {
                 Field campoJava = campo(entidad.getClass(), campo.name());
                 campoJava.set(entidad, dato);
             }
-            guardarGenerico(entidad);
-            recargar();
-            nuevo();
-            Alertas.informacion("Registro guardado correctamente con Hibernate.");
+            Class<?> tipo = actual.type();
+            FxDb.ejecutar(() -> {
+                guardarGenerico(tipo, entidad);
+                return null;
+            }, ignorado -> {
+                if (actual != null && actual.type() == tipo) {
+                    nuevo();
+                    recargar();
+                }
+                Alertas.informacion("Registro guardado correctamente con Hibernate.");
+            }, error -> Alertas.error("No se guardó el registro.\n" + error.getMessage()));
         } catch (Exception ex) {
             Alertas.error("No se guardó el registro.\n" + ex.getMessage());
         }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void guardarGenerico(Object obj) { new JpaRepository(actual.type()).save(obj); }
+    private void guardarGenerico(Class<?> tipo, Object obj) {
+        new JpaRepository(tipo).save(obj);
+    }
 
     @FXML private void eliminar() {
-        if (editando == null || !Alertas.confirmar("¿Eliminar " + actual.singular().toLowerCase() + " #" + texto(editando, "id") + "?")) return;
-        try {
-            eliminarGenerico((Long) valor(editando, "id"));
-            recargar();
-            nuevo();
+        if (editando == null || !Alertas.confirmar("¿Eliminar " + actual.singular().toLowerCase() +
+                " #" + texto(editando, "id") + "?")) return;
+        Long id = (Long) valor(editando, "id");
+        Class<?> tipo = actual.type();
+        FxDb.ejecutar(() -> {
+            eliminarGenerico(tipo, id);
+            return null;
+        }, ignorado -> {
+            if (actual != null && actual.type() == tipo) {
+                nuevo();
+                recargar();
+            }
             Alertas.informacion("Registro eliminado.");
-        } catch (Exception ex) { Alertas.error(ex.getMessage()); }
+        }, error -> Alertas.error(error.getMessage()));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void eliminarGenerico(Long id) { new JpaRepository(actual.type()).delete(id); }
+    private void eliminarGenerico(Class<?> tipo, Long id) {
+        new JpaRepository(tipo).delete(id);
+    }
 
     @FXML private void recargar() {
         if (actual == null) return;
-        try {
-            todos = new ArrayList<>(listado(actual.type()));
+        Class<?> tipo = actual.type();
+        long revision = ++revisionListado;
+        FxDb.ejecutar(() -> {
+            List<Object> registros = new ArrayList<>();
+            registros.addAll(listado(tipo));
+            return registros;
+        }, registros -> {
+            if (revision != revisionListado || actual == null || actual.type() != tipo) return;
+            todos = registros;
             aplicarFiltro();
-        } catch (Exception ex) { etiquetaCantidad.setText("Error de conexión"); Alertas.error(ex.getMessage()); }
+        }, error -> {
+            if (revision != revisionListado) return;
+            etiquetaCantidad.setText("Error de conexión");
+            Alertas.error(error.getMessage());
+        });
     }
 
     private void aplicarFiltro() {

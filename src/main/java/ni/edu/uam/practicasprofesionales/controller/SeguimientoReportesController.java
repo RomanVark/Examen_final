@@ -1,6 +1,5 @@
 package ni.edu.uam.practicasprofesionales.controller;
 
-import jakarta.persistence.EntityManager;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -11,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
 import ni.edu.uam.practicasprofesionales.service.ExportadorCsv;
 import ni.edu.uam.practicasprofesionales.service.ReporteSeguimientoService;
+import ni.edu.uam.practicasprofesionales.util.FxDb;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,13 +22,7 @@ public class SeguimientoReportesController {
     @FXML private ComboBox<ReporteSeguimientoService.Reporte> selectorReporte;
     @FXML private TableView<List<String>> tablaReporte;
     @FXML private Label textoResultado;
-    private EntityManager entityManager;
     private List<List<String>> filasActuales = new ArrayList<>();
-
-    public void configurar(EntityManager entityManager) {
-        this.entityManager = entityManager;
-        if (selectorReporte != null && selectorReporte.getValue() != null) cargarReporte();
-    }
 
     @FXML public void initialize() {
         selectorReporte.setItems(FXCollections.observableArrayList(ReporteSeguimientoService.REPORTES));
@@ -39,12 +33,9 @@ public class SeguimientoReportesController {
     @FXML public void cargarReporte() {
         ReporteSeguimientoService.Reporte reporte = selectorReporte.getValue();
         if (reporte == null) return;
-        if (entityManager == null) {
-            textoResultado.setText("La conexión de persistencia todavía no está configurada.");
-            return;
-        }
-        try {
-            List<Object[]> resultado = ReporteSeguimientoService.ejecutar(entityManager, reporte);
+        textoResultado.setText("Consultando PostgreSQL...");
+        FxDb.ejecutar(() -> ReporteSeguimientoService.ejecutar(reporte), resultado -> {
+            if (selectorReporte.getValue() != reporte) return;
             filasActuales = new ArrayList<>();
             for (Object[] fila : resultado) {
                 List<String> valores = new ArrayList<>();
@@ -62,9 +53,8 @@ public class SeguimientoReportesController {
             }
             tablaReporte.setItems(FXCollections.observableArrayList(filasActuales));
             textoResultado.setText(filasActuales.size() + " resultado(s)");
-        } catch (RuntimeException ex) {
-            textoResultado.setText("No se pudo ejecutar el reporte: " + ex.getMessage());
-        }
+        }, error -> textoResultado.setText(
+            "No se pudo ejecutar el reporte: " + error.getMessage()));
     }
 
     @FXML public void exportarCsv() {

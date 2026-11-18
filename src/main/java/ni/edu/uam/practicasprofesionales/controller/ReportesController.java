@@ -2,14 +2,13 @@ package ni.edu.uam.practicasprofesionales.controller;
 
 import ni.edu.uam.practicasprofesionales.service.ReporteHqlService;
 import ni.edu.uam.practicasprofesionales.service.ReportePdfService;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
+import ni.edu.uam.practicasprofesionales.util.FxDb;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ public class ReportesController {
     @FXML private ComboBox<ReporteHqlService.Reporte> selectorReporte;
     @FXML private TableView<List<String>> tablaReporte;
     @FXML private Label textoResultado;
+    @FXML private Button btnExportarPdf;
 
     @FXML public void initialize() {
         selectorReporte.setItems(FXCollections.observableArrayList(ReporteHqlService.REPORTES));
@@ -35,9 +37,9 @@ public class ReportesController {
     @FXML private void cargar() {
         var elegido = selectorReporte.getValue();
         if (elegido == null) return;
-        try {
+        FxDb.ejecutar(() -> ReporteHqlService.ejecutar(elegido), resultados -> {
+            if (selectorReporte.getValue() != elegido) return;
             tablaReporte.getColumns().clear();
-            var resultados = ReporteHqlService.ejecutar(elegido);
             List<List<String>> filas = new ArrayList<>();
             for (Object[] fila : resultados) {
                 List<String> valores = new ArrayList<>();
@@ -53,7 +55,7 @@ public class ReportesController {
             }
             tablaReporte.setItems(FXCollections.observableArrayList(filas));
             textoResultado.setText(filas.size() + " resultado(s) · Consulta HQL sobre entidades relacionadas");
-        } catch (Exception ex) { Alertas.error(ex.getMessage()); }
+        }, error -> Alertas.error(error.getMessage()));
     }
     @FXML private void exportarCsv() {
         var reporte = selectorReporte.getValue();
@@ -77,115 +79,82 @@ public class ReportesController {
             .collect(Collectors.joining(","));
     }
 
+    /** JasperReports usa las cuatro plantillas JRXML provenientes de master. */
+    private record PlantillaPdf(String archivo, List<String> campos) { }
 
-    @FXML
-    private void exportarPdf() {
+    private static PlantillaPdf plantillaPara(ReporteHqlService.Reporte reporte) {
+        return switch (reporte.titulo()) {
+            case "Prácticas por estudiante y empresa" ->
+                new PlantillaPdf("reporte_practicas.jrxml",
+                    List.of("id", "estudiante", "empresa", "estado"));
+            case "Horas registradas por práctica" ->
+                new PlantillaPdf("reporte_horas.jrxml",
+                    List.of("practica", "estudiante", "horas"));
+            case "Postulaciones por oferta" ->
+                new PlantillaPdf("reporte_postulaciones.jrxml",
+                    List.of("codigo", "oferta", "postulaciones"));
+            case "Promedio de evaluación por estudiante" ->
+                new PlantillaPdf("reporte_promedios.jrxml",
+                    List.of("estudiante", "promedio"));
+            default -> throw new IllegalArgumentException(
+                "No existe plantilla PDF para: " + reporte.titulo());
+        };
+    }
+
+    @FXML private void exportarPdf() {
         var reporte = selectorReporte.getValue();
-
         if (reporte == null) {
-            Alertas.error("Selecciona un reporte primero.");
+            Alertas.error("Selecciona un reporte antes de exportar a PDF.");
             return;
         }
 
-        // Identificar la plantilla y los campos de cada reporte
-        String nombrePlantilla;
-        String[] campos;
-
-        switch (reporte.titulo()) {
-
-            case "Prácticas por estudiante y empresa" ->
-            {
-                nombrePlantilla = "reporte_practicas.jrxml";
-                campos = new String[]{
-                        "id", "estudiante", "empresa", "estado"
-                };
-            }
-
-            case "Horas registradas por práctica" ->
-            {
-                nombrePlantilla = "reporte_horas.jrxml";
-                campos = new String[]{
-                        "practica", "estudiante", "horas"
-                };
-            }
-
-            case "Postulaciones por oferta" ->
-            {
-                nombrePlantilla = "reporte_postulaciones.jrxml";
-                campos = new String[]{
-                        "codigo", "oferta", "postulaciones"
-                };
-            }
-
-            case "Promedio de evaluación por estudiante" ->
-            {
-                nombrePlantilla = "reporte_promedios.jrxml";
-                campos = new String[]{
-                        "estudiante", "promedio"
-                };
-            }
-
-            default -> {
-                Alertas.error("No existe una plantilla para este reporte.");
-                return;
-            }
+        final PlantillaPdf plantilla;
+        try {
+            plantilla = plantillaPara(reporte);
+        } catch (IllegalArgumentException ex) {
+            Alertas.error(ex.getMessage());
+            return;
         }
 
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Guardar reporte PDF");
-        chooser.setInitialFileName(
-                nombrePlantilla.replace(".jrxml", ".pdf")
-        );
-
+        chooser.setInitialFileName(plantilla.archivo().replace(".jrxml", ".pdf"));
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf")
-        );
-
-        File archivo = chooser.showSaveDialog(
-                tablaReporte.getScene().getWindow()
-        );
-
+            new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf"));
+        var archivo = chooser.showSaveDialog(tablaReporte.getScene().getWindow());
         if (archivo == null) return;
 
-        try {
-            // Volver a consultar los datos del reporte seleccionado
-            List<Object[]> resultados =
-                    ReporteHqlService.ejecutar(reporte);
+        btnExportarPdf.setDisable(true);
+        textoResultado.setText("Generando reporte PDF...");
 
+        // Se consulta PostgreSQL y compila JasperReports fuera del hilo JavaFX.
+        FxDb.ejecutar(() -> {
+            List<Object[]> resultados = ReporteHqlService.ejecutar(reporte);
             List<Map<String, ?>> datos = new ArrayList<>();
-
-            // Convertir los resultados HQL a mapas
             for (Object[] fila : resultados) {
-                Map<String, Object> registro = new HashMap<>();
-
-                for (int i = 0; i < campos.length; i++) {
-                    registro.put(
-                            campos[i],
-                            fila[i] == null ? "" : fila[i].toString()
-                    );
+                if (fila.length != plantilla.campos().size()) {
+                    throw new IllegalStateException("El reporte HQL devolvió " + fila.length
+                        + " campos; la plantilla espera " + plantilla.campos().size() + ".");
                 }
-
+                Map<String, Object> registro = new LinkedHashMap<>();
+                for (int i = 0; i < fila.length; i++) {
+                    registro.put(plantilla.campos().get(i),
+                        fila[i] == null ? "" : fila[i].toString());
+                }
                 datos.add(registro);
             }
-
-            // Generar el PDF
             ReportePdfService.generarReporte(
-                    nombrePlantilla,
-                    datos,
-                    archivo.getAbsolutePath()
-            );
-
-            Alertas.informacion(
-                    "Reporte PDF generado correctamente:\n"
-                            + archivo.getAbsolutePath()
-            );
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Alertas.error(
-                    "No se pudo generar el PDF: " + ex.getMessage()
-            );
-        }
+                plantilla.archivo(), datos, archivo.getAbsolutePath());
+            return archivo.getAbsolutePath();
+        }, destino -> {
+            btnExportarPdf.setDisable(false);
+            textoResultado.setText("Reporte PDF generado: " + archivo.getName());
+            Alertas.informacion("Reporte PDF generado correctamente:\n" + destino);
+        }, error -> {
+            btnExportarPdf.setDisable(false);
+            textoResultado.setText("No se pudo generar el reporte PDF.");
+            Alertas.error("Error de exportación PDF: " + error.getMessage());
+        });
     }
 
 }
