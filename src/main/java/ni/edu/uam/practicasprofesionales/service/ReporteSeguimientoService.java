@@ -1,6 +1,7 @@
 package ni.edu.uam.practicasprofesionales.service;
 
 import org.hibernate.Session;
+import ni.edu.uam.practicasprofesionales.persistence.HibernateUtil;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +43,13 @@ public final class ReporteSeguimientoService {
         Arrays.asList(HORAS_POR_PRACTICA, PROMEDIO_EVALUACIONES);
 
     private ReporteSeguimientoService() { }
+
+    /** Una sesión independiente por consulta para uso seguro desde Task de JavaFX. */
+    public static List<Object[]> ejecutar(Reporte reporte) {
+        try (Session session = HibernateUtil.openSession()) {
+            return ejecutar(session, reporte);
+        }
+    }
 
     public static List<Object[]> ejecutar(Session entityManager, Reporte reporte) {
         if (entityManager == null)
