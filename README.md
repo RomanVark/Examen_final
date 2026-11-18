@@ -2,65 +2,88 @@
 
 ## 1. Requisitos
 
-- **Java:** Eclipse Temurin JDK 21.0.12 (o un JDK 21 compatible).
+- **Java:** Eclipse Temurin JDK 21.0.12.
 - **IDE:** IntelliJ IDEA con soporte para Maven y JavaFX.
-- **Maven:** 3.9 o superior, o Maven Wrapper incluido en el proyecto.
-- **PostgreSQL:** versión 15 o superior y permisos para crear una base de datos.
-- **Dependencias del proyecto:** JavaFX 21.0.6, Hibernate ORM 6.6.59.Final y controlador PostgreSQL 42.7.14 (gestionadas mediante pom.xml).
-- **Opcionales:** pgAdmin para ejecutar SQL y Gluon Scene Builder para editar FXML.
-- **Conexión local:** PostgreSQL disponible en el puerto correspondiente (habitualmente 5432) y usuario con contraseña.
+- **Maven:** 3.6.3 o superior; se incluye Maven Wrapper.
+- **PostgreSQL:** versión 15 o superior.
+- **Interfaz:** JavaFX 21.0.6.
+- **Persistencia:** Jakarta Persistence 3.2 con Hibernate ORM 7.4.13.Final.
+- **Dependencias:** Spring Boot 4.1.2 como plataforma de dependencias y Spring Data JPA 4.1.2, seleccionados desde Spring Initializr; PostgreSQL Driver gestionado por Maven.
+- **Opcionales:** pgAdmin y Gluon Scene Builder.
+
+La aplicación continúa siendo de escritorio con JavaFX. En esta fase se incorpora Spring Data JPA como dependencia para obtener Hibernate administrado por Spring Boot; no se agrega servidor web ni API REST.
 
 ## 2. Instalación y uso
 
-1. **Clonar el repositorio y abrir la rama Roman:**
+1. **Clonar el repositorio y seleccionar la rama de trabajo:**
 
-   ~~~powershell
+   ```powershell
    git clone https://github.com/RomanVark/Examen_final.git
    cd Examen_final
-   git switch Roman
-   ~~~
+   git switch AlfredoV2
+   ```
 
-2. **Configurar Java 21 e IntelliJ:** abrir la carpeta del proyecto que contiene pom.xml. En **File → Project Structure → Project**, configurar Temurin 21.0.12 como SDK y recargar las dependencias Maven.
+2. **Configurar Java 21:** en IntelliJ IDEA abre la carpeta que contiene `pom.xml`. En **File → Project Structure → Project**, selecciona Temurin 21.0.12 como Project SDK y recarga Maven.
 
-3. **Crear la base de datos:** en pgAdmin, conectarse a la base existente **postgres** y ejecutar **sql/00_crear_base.sql**. Omitirlo si ya existe la base **practicas_profesionales**.
+3. **Crear la base de datos:** en pgAdmin, conéctate a la base `postgres` y ejecuta `sql/00_crear_base.sql`. Omite este paso si ya existe `practicas_profesionales`.
 
-4. **Preparar las doce tablas y los datos de prueba:** conectarse en pgAdmin a **practicas_profesionales** y ejecutar exactamente en este orden:
+4. **Crear el esquema y los datos de ejemplo:** conéctate a `practicas_profesionales` y ejecuta los siguientes archivos en orden:
 
-   ~~~text
+   ```text
    sql/01_esquema.sql
    sql/02_datos_ejemplo.sql
    sql/03_consultas_verificacion.sql
-   ~~~
+   ```
 
-   La aplicación valida las doce tablas al iniciar. No basta con ejecutar sql/01_academico.sql, que solo crea tres. Si una tabla ya existe con estructura diferente, el comando CREATE TABLE IF NOT EXISTS no la actualiza automáticamente.
+   El esquema contiene las doce tablas utilizadas por los módulos académico, empresas, asignaciones y seguimiento. Los scripts SQL son la fuente de creación del esquema; Hibernate usa `validate` por defecto y no modifica las tablas.
 
-5. **Configurar las credenciales:** en la terminal PowerShell de IntelliJ, desde la carpeta raíz, establecer las variables de entorno con los valores de tu instalación:
+5. **Configurar la conexión en PowerShell:**
 
-   ~~~powershell
+   ```powershell
    $env:DB_URL="jdbc:postgresql://localhost:5432/practicas_profesionales"
    $env:DB_USER="postgres"
    $env:DB_PASSWORD="TU_CONTRASEÑA_LOCAL"
-   ~~~
+   $env:HIBERNATE_DDL_AUTO="validate"
+   ```
 
-   Si ejecutas mediante el botón **Run** de IntelliJ, configura las mismas variables en **Run → Edit Configurations → Environment variables**, porque puede no heredarlas de la terminal. No guardar contraseñas reales en Git.
+   Si ejecutas desde el botón **Run** de IntelliJ, configura las mismas variables en **Run → Edit Configurations → Environment variables**. No guardes contraseñas reales en Git.
 
-6. **Compilar y ejecutar la aplicación:**
+   `HIBERNATE_DDL_AUTO` acepta `validate`, `none` o `update`. Mantén `validate` para comprobar el esquema sin alterarlo; utiliza `update` únicamente en una base local de desarrollo.
 
-   ~~~powershell
-   .\mvnw.cmd clean compile
+6. **Compilar y ejecutar las pruebas:**
+
+   ```powershell
+   .\mvnw.cmd clean test
+   ```
+
+   Las pruebas unitarias se ejecutan sin PostgreSQL. Las pruebas de integración se omiten cuando `DB_PASSWORD` no está configurada; para ejecutarlas, prepara primero la base de datos y sus variables de entorno.
+
+7. **Iniciar la aplicación JavaFX:**
+
+   ```powershell
    .\mvnw.cmd javafx:run
-   ~~~
+   ```
 
-   Si Maven está instalado también puedes utilizar los comandos mvn clean compile y mvn javafx:run.
+   También puedes usar `mvn clean test` y `mvn javafx:run` si Maven está instalado.
 
-7. **Navegar por el sistema:** desde el menú lateral, abre **Inicio / Resumen**, **Módulo académico** (carreras, estudiantes, tutores), **Catálogos** (empresas, supervisores, convenios), **Gestión de prácticas** (ofertas, postulaciones, prácticas, bitácoras, evaluaciones y documentos), **Reportes HQL** o **Seguimiento / Reportes**. Para agregar o editar un registro completa los campos y guarda; para eliminar selecciona el registro y confirma. Los reportes permiten consultar resultados relacionados y exportarlos a CSV.
+8. **Usar los módulos:** desde el menú lateral abre **Inicio / Resumen**, **Módulo académico**, **Catálogos**, **Gestión de prácticas**, **Reportes HQL** o **Seguimiento / Reportes**. Los formularios permiten crear, consultar, editar y eliminar registros según sus relaciones y reglas de negocio.
 
-8. **Ejecutar las pruebas unitarias (opcional):**
+9. **Editar las pantallas:** abre los archivos FXML de `src/main/resources/ni/edu/uam/practicasprofesionales/` con Scene Builder. Los estilos se encuentran en la carpeta `styles`.
 
-   ~~~powershell
-   .\mvnw.cmd test
-   ~~~
+## 3. Persistencia y Hibernate
 
-   Las pruebas que interactúan con PostgreSQL requieren la base y las variables de conexión configuradas. Si aparece **Unable to build Hibernate SessionFactory**, revisa la causa detallada **Caused by:** en la consola de IntelliJ, las credenciales, el nombre de la base y el esquema de las doce tablas.
+- `pom.xml` utiliza el parent de Spring Boot 4.1.2 y la dependencia `spring-boot-starter-data-jpa`, siguiendo la selección de Spring Initializr.
+- Spring Boot 4.1.2 administra Hibernate ORM 7.4.13.Final y Jakarta Persistence 3.2; no se fija manualmente otra versión de Hibernate.
+- Las entidades se registran explícitamente en `src/main/resources/META-INF/persistence.xml`.
+- `JpaUtil` mantiene una única `EntityManagerFactory` y crea un `EntityManager` por operación.
+- `JpaRepository<T>` concentra las operaciones CRUD y sus transacciones.
+- Los servicios conservan consultas HQL/JPQL para búsquedas, relaciones y reportes.
+- Las credenciales se obtienen de variables de entorno; no se incluyen contraseñas en el repositorio.
 
-9. **Editar las pantallas (opcional):** abrir los archivos FXML de **src/main/resources/ni/edu/uam/practicasprofesionales/** con Scene Builder. El diseño CSS se encuentra en la carpeta **styles**. Los campos del CRUD genérico se generan dinámicamente desde Java.
+## 4. Verificación antes de entregar
+
+1. Ejecuta `mvnw.cmd clean test`.
+2. Comprueba que la base de datos contiene las doce tablas.
+3. Inicia JavaFX y verifica los CRUD de cada módulo.
+4. Ejecuta los reportes HQL y exporta un CSV.
+5. Comprueba que la aplicación inicia con `HIBERNATE_DDL_AUTO=validate`.
