@@ -1,6 +1,10 @@
 package ni.edu.uam.practicasprofesionales.controller;
 
 import ni.edu.uam.practicasprofesionales.service.ReporteHqlService;
+import ni.edu.uam.practicasprofesionales.service.ReportePdfService;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -72,4 +76,116 @@ public class ReportesController {
         return fila.stream().map(s -> "\"" + s.replace("\"", "\"\"") + "\"")
             .collect(Collectors.joining(","));
     }
+
+
+    @FXML
+    private void exportarPdf() {
+        var reporte = selectorReporte.getValue();
+
+        if (reporte == null) {
+            Alertas.error("Selecciona un reporte primero.");
+            return;
+        }
+
+        // Identificar la plantilla y los campos de cada reporte
+        String nombrePlantilla;
+        String[] campos;
+
+        switch (reporte.titulo()) {
+
+            case "Prácticas por estudiante y empresa" ->
+            {
+                nombrePlantilla = "reporte_practicas.jrxml";
+                campos = new String[]{
+                        "id", "estudiante", "empresa", "estado"
+                };
+            }
+
+            case "Horas registradas por práctica" ->
+            {
+                nombrePlantilla = "reporte_horas.jrxml";
+                campos = new String[]{
+                        "practica", "estudiante", "horas"
+                };
+            }
+
+            case "Postulaciones por oferta" ->
+            {
+                nombrePlantilla = "reporte_postulaciones.jrxml";
+                campos = new String[]{
+                        "codigo", "oferta", "postulaciones"
+                };
+            }
+
+            case "Promedio de evaluación por estudiante" ->
+            {
+                nombrePlantilla = "reporte_promedios.jrxml";
+                campos = new String[]{
+                        "estudiante", "promedio"
+                };
+            }
+
+            default -> {
+                Alertas.error("No existe una plantilla para este reporte.");
+                return;
+            }
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Guardar reporte PDF");
+        chooser.setInitialFileName(
+                nombrePlantilla.replace(".jrxml", ".pdf")
+        );
+
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf")
+        );
+
+        File archivo = chooser.showSaveDialog(
+                tablaReporte.getScene().getWindow()
+        );
+
+        if (archivo == null) return;
+
+        try {
+            // Volver a consultar los datos del reporte seleccionado
+            List<Object[]> resultados =
+                    ReporteHqlService.ejecutar(reporte);
+
+            List<Map<String, ?>> datos = new ArrayList<>();
+
+            // Convertir los resultados HQL a mapas
+            for (Object[] fila : resultados) {
+                Map<String, Object> registro = new HashMap<>();
+
+                for (int i = 0; i < campos.length; i++) {
+                    registro.put(
+                            campos[i],
+                            fila[i] == null ? "" : fila[i].toString()
+                    );
+                }
+
+                datos.add(registro);
+            }
+
+            // Generar el PDF
+            ReportePdfService.generarReporte(
+                    nombrePlantilla,
+                    datos,
+                    archivo.getAbsolutePath()
+            );
+
+            Alertas.informacion(
+                    "Reporte PDF generado correctamente:\n"
+                            + archivo.getAbsolutePath()
+            );
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Alertas.error(
+                    "No se pudo generar el PDF: " + ex.getMessage()
+            );
+        }
+    }
+
 }
