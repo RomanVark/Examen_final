@@ -1,11 +1,17 @@
-# Evidencias pendientes — Laboratorio Hibernate
+# Capturas originales del laboratorio Hibernate
 
-Esta carpeta se reserva para **capturas reales del proyecto**, no para imágenes fabricadas o los archivos PDF con datos ficticios.
+Las imágenes de esta carpeta provienen de capturas suministradas por el equipo; no son ilustraciones generadas ni datos simulados. Sus limitaciones se explican en la sección **7. Evidencias** del README principal.
 
-1. `01-estructura-proyecto.png` — árbol de paquetes y recursos de Hibernate.
-2. `02-ddl-hibernate.png` — salida `create table` de la prueba de esquema en `practicas_profesionales_hibernate_demo` y `BUILD SUCCESS`.
-3. `03-consultas-hql.png` — parámetro, `JOIN FETCH` y agregación, con resultados.
-4. `04-base-de-datos.png` — tablas y filas reales de PostgreSQL en pgAdmin.
-5. `05-persistencia-reinicio.png` — datos conservados después de cerrar y volver a abrir JavaFX.
+| Archivo | Qué demuestra |
+|---|---|
+| `01-estructura-proyecto.png` | Estructura de paquetes Java del proyecto en IntelliJ; editor vacío en la captura recibida |
+| `02-ddl-hibernate.png` | Estado exitoso de GitHub Actions en el trabajo de DDL, sin las instrucciones `create table` visibles |
+| `02-ddl-hibernate-salida.txt` | Líneas auténticas del registro del workflow que muestran `create table`, 13 tablas y `BUILD SUCCESS` |
+| `03-consultas-hql.png` | Consultas del `AcademicoDao` en IntelliJ |
+| `03-busqueda-estudiantes.png` | Búsqueda desde JavaFX |
+| `03-resultados-hql.png` | Reporte real HQL en JavaFX |
+| `04-base-de-datos.png` | Tablas y registros de carreras de PostgreSQL en pgAdmin |
 
-Cuando se incorporen las cinco imágenes, incrustarlas en la sección 7 del `README.md` principal. Los PDF de comprobación de JasperReports quedan en `target/reportes-verificados` y no sustituyen estas capturas.
+**Pendiente:** la imagen `05-persistencia-reinicio.png` requiere capturas antes y después de reiniciar la aplicación. No se presenta como conseguida. La captura de generación DDL puede mejorarse mostrando dentro del job las líneas SQL; el archivo de salida adjunto permite verificar esas instrucciones sin suplantar la captura.
+
+[Ver ejecución GitHub Actions](https://github.com/RomanVark/Examen_final/actions/runs/44386239983).

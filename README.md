@@ -179,24 +179,46 @@ Gracias a esta arquitectura podemos mantener JavaFX separado de la persistencia 
 
 ## 7. Evidencias y verificación de entrega
 
-La rúbrica exige **cinco capturas auténticas** en la carpeta `evidencias/` e incrustadas en este README. **Aún están pendientes de aportar**; los PDF ficticios de pruebas no reemplazan evidencias reales.
+Las imágenes siguientes son **capturas originales proporcionadas por los integrantes**, incorporadas a la carpeta `evidencias/` sin reemplazar datos ni simular ejecuciones. Se distingue entre evidencia completa y una captura que necesita ampliación para satisfacer estrictamente la rúbrica.
 
-| Imagen requerida | Contenido solicitado | Estado |
+| Número | Evidencia incorporada | Estado y alcance |
 |---|---|---|
-| `evidencias/01-estructura-proyecto.png` | Paquetes, DAOs, entidades, HibernateUtil y configuración | Pendiente |
-| `evidencias/02-ddl-hibernate.png` | SQL `create table` generado en la base demo | Pendiente |
-| `evidencias/03-consultas-hql.png` | Parámetro nombrado, JOIN FETCH y agregación con resultados | Pendiente |
-| `evidencias/04-base-de-datos.png` | Tablas y datos reales visibles en pgAdmin | Pendiente |
-| `evidencias/05-persistencia-reinicio.png` | Registro conservado tras reiniciar JavaFX | Pendiente |
+| 01 | [Estructura del proyecto](evidencias/01-estructura-proyecto.png) | **Adjunta.** El árbol de paquetes se ve en IntelliJ; aún puede mejorarse mostrando `HibernateUtil.java` abierto y `hibernate.cfg.xml` en el árbol. |
+| 02 | [Resultado de GitHub Actions](evidencias/02-ddl-hibernate.png) | **Adjunta como comprobación del workflow.** Muestra los trabajos exitosos, no las instrucciones SQL. Para demostrar la generación se agrega el [registro de ejecución real](evidencias/02-ddl-hibernate-salida.txt) y el [trabajo original](https://github.com/RomanVark/Examen_final/actions/runs/44386239983). Conviene añadir otra captura de la sección `create table` del log. |
+| 03 | [Consultas HQL en código](evidencias/03-consultas-hql.png), [búsqueda de estudiantes](evidencias/03-busqueda-estudiantes.png) y [resultado de HQL](evidencias/03-resultados-hql.png) | **Adjuntas.** Parámetros nombrados, `JOIN FETCH`, `COUNT/GROUP BY` y resultados reales en JavaFX. |
+| 04 | [PostgreSQL en pgAdmin](evidencias/04-base-de-datos.png) | **Adjunta.** Se muestran las tablas y seis carreras. La captura no muestra `carrera_tutor` en el árbol; el test de DDL la verifica por separado y puede actualizarse el árbol en pgAdmin. |
+| 05 | `evidencias/05-persistencia-reinicio.png` | **Pendiente.** Se confirmó verbalmente la persistencia de una carrera, pero todavía no existe una pareja de capturas verificables antes y después del reinicio. |
 
-Cuando dispongas de las capturas, guárdalas con esos nombres e inserta las imágenes reales usando estas líneas:
+### Evidencia 01 — Estructura del proyecto
 
-~~~markdown
-![Estructura de proyecto](evidencias/01-estructura-proyecto.png)
-![DDL de Hibernate](evidencias/02-ddl-hibernate.png)
-![Consultas HQL](evidencias/03-consultas-hql.png)
-![Base de datos](evidencias/04-base-de-datos.png)
-![Persistencia tras reinicio](evidencias/05-persistencia-reinicio.png)
-~~~
+![Árbol de paquetes JavaFX, Hibernate y DAO en IntelliJ](evidencias/01-estructura-proyecto.png)
 
-Antes de entregar: ejecutar Maven, comprobar la generación y apertura de los cuatro PDF, demostrar DDL sin tocar la base principal, verificar CRUD, HQL y persistencia al reiniciar y probar las instrucciones desde un clon nuevo.
+### Evidencia 02 — Generación DDL de Hibernate en PostgreSQL aislado
+
+![Ejecución exitosa de generación DDL en GitHub Actions](evidencias/02-ddl-hibernate.png)
+
+En el [registro de salida de Hibernate](evidencias/02-ddl-hibernate-salida.txt) se conservan las líneas del workflow real: `create table carrera_tutor`, `create table carreras`, `create table estudiantes`, 13 tablas verificadas, dos FK para `carrera_tutor` y `BUILD SUCCESS`. El trabajo usó una instancia **temporal** de PostgreSQL y nunca la base principal.
+
+### Evidencia 03 — Consultas HQL y resultados reales
+
+![DAO académico con consultas HQL, JOIN FETCH y agregaciones](evidencias/03-consultas-hql.png)
+
+![Consulta HQL de postulaciones por oferta en JavaFX](evidencias/03-resultados-hql.png)
+
+![Búsqueda de estudiantes con parámetro nombrado desde JavaFX](evidencias/03-busqueda-estudiantes.png)
+
+### Evidencia 04 — Tablas y registros PostgreSQL
+
+![Consulta a la tabla carreras y vista de tablas en pgAdmin](evidencias/04-base-de-datos.png)
+
+### Evidencia 05 — Persistencia entre ejecuciones
+
+**Pendiente de imagen auténtica.** Falta guardar una captura de una carrera con código identificable después de registrarla, cerrar completamente JavaFX, abrirlo de nuevo y capturar el mismo registro conservado. Cuando exista, incorporar `evidencias/05-persistencia-reinicio.png` y sustituir esta nota por:
+
+```markdown
+![Persistencia tras reiniciar la aplicación](evidencias/05-persistencia-reinicio.png)
+```
+
+### Comprobaciones automáticas complementarias
+
+El workflow [JasperReports y pruebas Hibernate — ejecución exitosa #44386239983](https://github.com/RomanVark/Examen_final/actions/runs/44386239983) confirma, en GitHub Actions, las **4/4 pruebas de los PDF JasperReports** y la prueba DDL de las **13 tablas** y su posterior validación con Hibernate 7.4. Los archivos PDF del workflow usan datos ficticios para verificar las plantillas; no sustituyen las capturas de trabajo real.

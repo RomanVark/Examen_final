@@ -1,0 +1,15 @@
+Registro real de GitHub Actions: generación automática de tablas con Hibernate 7.4
+Repositorio: RomanVark/Examen_final
+Rama y commit: Roman / 8850cd0523971ec454e6adea1e84387b7ecd54fb
+Workflow: https://github.com/RomanVark/Examen_final/actions/runs/44386239983
+Trabajo: Generación DDL nativa en PostgreSQL temporal
+Estas líneas se seleccionaron del log real; no representan la salida completa.
+
+2026-11-18T20:00:21.4554631Z     create table carrera_tutor (
+2026-11-18T20:00:21.4556490Z     create table carreras (
+2026-11-18T20:00:21.4570470Z     create table estudiantes (
+2026-11-18T20:00:21.5522630Z HIBERNATE DDL: 13 tablas verificadas, incluida carrera_tutor con dos FK.
+2026-11-18T20:00:21.6293451Z HIBERNATE DDL: validación de esquema correcta.
+2026-11-18T20:00:21.6642262Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.999 s -- in ni.edu.uam.practicasprofesionales.persistence.HibernateGeneracionEsquemaTest
+2026-11-18T20:00:21.7013807Z [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+2026-11-18T20:00:21.7036053Z [INFO] BUILD SUCCESS
