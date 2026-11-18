@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import ni.edu.uam.practicasprofesionales.model.enums.*;
 
 @Entity
@@ -33,6 +35,11 @@ public class TutorAcademico {
 
     @Column(name = "activo", nullable = false)
     private Boolean activo;
+
+    @ManyToMany(mappedBy = "tutores")
+    private Set<Carrera> carreras = new HashSet<>();
+
+    public Set<Carrera> getCarreras() { return carreras; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

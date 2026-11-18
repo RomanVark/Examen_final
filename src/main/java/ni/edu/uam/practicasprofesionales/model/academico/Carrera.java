@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import ni.edu.uam.practicasprofesionales.model.enums.*;
 
 @Entity
@@ -33,6 +35,41 @@ public class Carrera {
 
     @OneToMany(mappedBy = "carrera", fetch = FetchType.LAZY)
     private List<Estudiante> estudiantes = new ArrayList<>();
+
+    // Relación N-M: una carrera puede tener varios tutores y un tutor atender varias carreras.
+    @ManyToMany
+    @JoinTable(name = "carrera_tutor",
+        joinColumns = @JoinColumn(name = "carrera_id"),
+        inverseJoinColumns = @JoinColumn(name = "tutor_id"))
+    private Set<TutorAcademico> tutores = new HashSet<>();
+
+    /** Mantiene ambos lados de la relación bidireccional 1-N. */
+    public void agregarEstudiante(Estudiante estudiante) {
+        if (estudiante == null) throw new IllegalArgumentException("El estudiante es obligatorio.");
+        if (estudiante.getCarrera() != null && estudiante.getCarrera() != this) {
+            estudiante.getCarrera().getEstudiantes().remove(estudiante);
+        }
+        if (!estudiantes.contains(estudiante)) estudiantes.add(estudiante);
+        estudiante.setCarrera(this);
+    }
+
+    public void quitarEstudiante(Estudiante estudiante) {
+        if (estudiante != null && estudiantes.remove(estudiante) && estudiante.getCarrera() == this) {
+            estudiante.setCarrera(null);
+        }
+    }
+
+    /** Eliminar un tutor solo elimina la asociación, no al tutor de la base. */
+    public void agregarTutor(TutorAcademico tutor) {
+        if (tutor == null) throw new IllegalArgumentException("El tutor es obligatorio.");
+        if (tutores.add(tutor)) tutor.getCarreras().add(this);
+    }
+
+    public void quitarTutor(TutorAcademico tutor) {
+        if (tutor != null && tutores.remove(tutor)) tutor.getCarreras().remove(this);
+    }
+
+    public Set<TutorAcademico> getTutores() { return tutores; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
