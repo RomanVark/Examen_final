@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Descargar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Configurar Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
       - name: Ejecutar pruebas Maven y validar los cuatro PDF
-        run: ./mvnw -B -ntp clean test
+        run: bash ./mvnw -B -ntp clean test
       - name: Publicar PDF de prueba y resultados Maven
         if: always()
         uses: actions/upload-artifact@v4
