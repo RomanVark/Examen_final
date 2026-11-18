@@ -23,8 +23,8 @@ class HibernateNativoConfiguracionTest {
         assertEquals(SessionFactory.class,
             HibernateUtil.class.getMethod("getSessionFactory").getReturnType());
         assertEquals(GenericDao.class, JpaRepository.class.getSuperclass());
-        assertTrue(SessionFactory.class.isAssignableFrom(
-            JpaUtil.class.getMethod("factory").getReturnType()));
+        assertEquals(jakarta.persistence.EntityManagerFactory.class,
+            JpaUtil.class.getMethod("factory").getReturnType());
     }
 
     @Test void registraLasDoceEntidadesDelDominio() throws Exception {
