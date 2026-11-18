@@ -1,22 +1,22 @@
 package ni.edu.uam.practicasprofesionales.service;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Prueba las cuatro plantillas JasperReports con datos de ejemplo.
- * No necesita PostgreSQL ni modifica datos reales.
+ * Compila cada JRXML, genera su PDF y comprueba cabecera y cierre del archivo.
+ * Los cuatro resultados de ejemplo quedan en target/reportes-verificados/.
+ * No utiliza PostgreSQL ni presenta los datos de ejemplo como evidencias reales.
  */
 class ReportePdfServiceTest {
-    @TempDir Path temporal;
+    private static final Path CARPETA = Path.of("target", "reportes-verificados");
 
     @Test void generaPdfDePracticas() throws Exception {
         verificar("reporte_practicas.jrxml", Map.of(
@@ -40,14 +40,19 @@ class ReportePdfServiceTest {
     }
 
     private void verificar(String plantilla, Map<String, ?> datos) throws Exception {
-        Path destino = temporal.resolve(plantilla.replace(".jrxml", ".pdf"));
+        Files.createDirectories(CARPETA);
+        Path destino = CARPETA.resolve(plantilla.replace(".jrxml", ".pdf"));
+
         ReportePdfService.generarReporte(plantilla, List.of(datos), destino.toString());
 
         assertTrue(Files.isRegularFile(destino), "No se generó " + destino);
-        assertTrue(Files.size(destino) > 100, "El PDF está vacío: " + destino);
-        try (var archivo = Files.newInputStream(destino)) {
-            byte[] cabecera = archivo.readNBytes(5);
-            assertEquals("%PDF-", new String(cabecera, StandardCharsets.US_ASCII));
-        }
+        byte[] contenido = Files.readAllBytes(destino);
+        assertTrue(contenido.length > 1_000, "El PDF está vacío o incompleto: " + destino);
+        String inicio = new String(contenido, 0, 5, StandardCharsets.US_ASCII);
+        assertEquals("%PDF-", inicio, "La cabecera no es PDF");
+        String finalArchivo = new String(
+            contenido, Math.max(0, contenido.length - 120),
+            Math.min(120, contenido.length), StandardCharsets.ISO_8859_1);
+        assertTrue(finalArchivo.contains("%%EOF"), "Falta cierre del archivo PDF: " + destino);
     }
 }
