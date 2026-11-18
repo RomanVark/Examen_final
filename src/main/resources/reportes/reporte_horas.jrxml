@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport
+        xmlns="http://jasperreports.sourceforge.net/jasperreports"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+        name="reporte_horas"
+        pageWidth="842"
+        pageHeight="595"
+        orientation="Landscape"
+        columnWidth="802"
+        leftMargin="20"
+        rightMargin="20"
+        topMargin="25"
+        bottomMargin="25">
+
+    <field name="practica" class="java.lang.String"/>
+    <field name="estudiante" class="java.lang.String"/>
+    <field name="horas" class="java.lang.String"/>
+
+    <title>
+        <band height="100">
+
+            <staticText>
+                <reportElement x="0" y="5" width="802" height="38"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="22" isBold="true"/>
+                </textElement>
+                <text><![CDATA[REPORTE DE HORAS REGISTRADAS]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="48" width="802" height="22"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="11"/>
+                </textElement>
+                <text><![CDATA[Horas acumuladas por práctica profesional]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="0" y="85" width="802" height="1"
+                               forecolor="#D7E0EA"/>
+            </line>
+
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="36">
+
+            <staticText>
+                <reportElement x="0" y="0" width="150" height="36"
+                               mode="Opaque" backcolor="#243B53"
+                               forecolor="#FFFFFF"/>
+                <box>
+                    <pen lineWidth="0.5" lineColor="#FFFFFF"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[PRÁCTICA]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="150" y="0" width="452" height="36"
+                               mode="Opaque" backcolor="#243B53"
+                               forecolor="#FFFFFF"/>
+                <box>
+                    <pen lineWidth="0.5" lineColor="#FFFFFF"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ESTUDIANTE]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="602" y="0" width="200" height="36"
+                               mode="Opaque" backcolor="#243B53"
+                               forecolor="#FFFFFF"/>
+                <box>
+                    <pen lineWidth="0.5" lineColor="#FFFFFF"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[HORAS REGISTRADAS]]></text>
+            </staticText>
+
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="34">
+
+            <textField>
+                <reportElement x="0" y="0" width="150" height="34"/>
+                <box leftPadding="5" rightPadding="5">
+                    <pen lineWidth="0.5" lineColor="#D7E0EA"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{practica}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="150" y="0" width="452" height="34"/>
+                <box leftPadding="12" rightPadding="8">
+                    <pen lineWidth="0.5" lineColor="#D7E0EA"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{estudiante}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="602" y="0" width="200" height="34"/>
+                <box leftPadding="5" rightPadding="5">
+                    <pen lineWidth="0.5" lineColor="#D7E0EA"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{horas}]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+
+</jasperReport>
+
