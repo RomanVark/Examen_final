@@ -7,6 +7,7 @@ module ni.edu.uam.practicasprofesionales {
     requires java.sql;
     requires java.naming;
     requires java.logging;
+    requires jasperreports;
 
     exports ni.edu.uam.practicasprofesionales.app;
     opens ni.edu.uam.practicasprofesionales.app to javafx.graphics;
