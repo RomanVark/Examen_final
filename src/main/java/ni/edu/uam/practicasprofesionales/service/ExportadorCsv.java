@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Exportación CSV UTF-8 con escape de comillas y separadores. */
+/** Exportación CSV UTF-8 con BOM para Excel y escape de comillas. */
 public final class ExportadorCsv {
     private ExportadorCsv() { }
 
@@ -18,6 +18,7 @@ public final class ExportadorCsv {
         if (encabezados == null || filas == null)
             throw new IllegalArgumentException("No hay datos para exportar.");
         try (BufferedWriter writer = Files.newBufferedWriter(destino, StandardCharsets.UTF_8)) {
+            writer.write('\uFEFF');
             writer.write(convertirFila(encabezados));
             writer.newLine();
             for (List<?> fila : filas) {
