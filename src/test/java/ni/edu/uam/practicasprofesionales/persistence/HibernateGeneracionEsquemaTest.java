@@ -78,10 +78,15 @@ class HibernateGeneracionEsquemaTest {
             });
         }
 
-        // Verificar lo creado con otra SessionFactory, sin volver a generar DDL.
-        config.setProperty("hibernate.hbm2ddl.auto", "validate");
-        config.setProperty("hibernate.show_sql", "false");
-        try (SessionFactory validacion = config.buildSessionFactory()) {
+        // Hibernate cierra servicios internos al cerrar la primera SessionFactory.
+        // Para una segunda inicialización se necesita una Configuration NUEVA.
+        Configuration verificacion = new Configuration().configure("hibernate.cfg.xml");
+        verificacion.setProperty("hibernate.connection.url", url);
+        verificacion.setProperty("hibernate.connection.username", usuario);
+        verificacion.setProperty("hibernate.connection.password", password);
+        verificacion.setProperty("hibernate.hbm2ddl.auto", "validate");
+        verificacion.setProperty("hibernate.show_sql", "false");
+        try (SessionFactory validacion = verificacion.buildSessionFactory()) {
             assertNotNull(validacion);
         }
         System.out.println("HIBERNATE DDL: validación de esquema correcta.");
