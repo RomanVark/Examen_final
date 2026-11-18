@@ -1,7 +1,6 @@
 package ni.edu.uam.practicasprofesionales.persistence;
 
 import ni.edu.uam.practicasprofesionales.model.academico.Carrera;
-import ni.edu.uam.practicasprofesionales.model.academico.Estudiante;
 import ni.edu.uam.practicasprofesionales.model.academico.TutorAcademico;
 import ni.edu.uam.practicasprofesionales.repository.AcademicoDao;
 import ni.edu.uam.practicasprofesionales.repository.GenericDao;
@@ -78,7 +77,12 @@ class HibernateNativoIntegracionTest {
                 assertEquals(1, actual.getTutores().size());
             }
 
-            assertFalse(new AcademicoDao().estudiantesPorCarrera().isEmpty());
+            AcademicoDao consultas = new AcademicoDao();
+            assertFalse(consultas.estudiantesPorCarrera().isEmpty());
+            assertNotNull(consultas.buscarEstudiantes("laboratorio"));
+            assertNotNull(consultas.listarCarrerasConEstudiantes());
+            assertNotNull(consultas.buscarTutores("laboratorio"));
+            assertSame(HibernateUtil.getSessionFactory(), JpaUtil.factory());
 
             // Una fábrica cerrada y reconstruida debe encontrar los mismos datos.
             Long id = carrera.getId();
