@@ -2,6 +2,7 @@ package ni.edu.uam.practicasprofesionales.controller;
 
 import ni.edu.uam.practicasprofesionales.service.ReporteHqlService;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
+import ni.edu.uam.practicasprofesionales.util.FxDb;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -31,9 +32,9 @@ public class ReportesController {
     @FXML private void cargar() {
         var elegido = selectorReporte.getValue();
         if (elegido == null) return;
-        try {
+        FxDb.ejecutar(() -> ReporteHqlService.ejecutar(elegido), resultados -> {
+            if (selectorReporte.getValue() != elegido) return;
             tablaReporte.getColumns().clear();
-            var resultados = ReporteHqlService.ejecutar(elegido);
             List<List<String>> filas = new ArrayList<>();
             for (Object[] fila : resultados) {
                 List<String> valores = new ArrayList<>();
@@ -49,7 +50,7 @@ public class ReportesController {
             }
             tablaReporte.setItems(FXCollections.observableArrayList(filas));
             textoResultado.setText(filas.size() + " resultado(s) · Consulta HQL sobre entidades relacionadas");
-        } catch (Exception ex) { Alertas.error(ex.getMessage()); }
+        }, error -> Alertas.error(error.getMessage()));
     }
     @FXML private void exportarCsv() {
         var reporte = selectorReporte.getValue();

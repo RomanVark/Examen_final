@@ -6,6 +6,7 @@ import ni.edu.uam.practicasprofesionales.model.asignaciones.*;
 import ni.edu.uam.practicasprofesionales.model.seguimiento.*;
 import ni.edu.uam.practicasprofesionales.repository.JpaRepository;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
+import ni.edu.uam.practicasprofesionales.util.FxDb;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -18,15 +19,20 @@ public class InicioController {
 
     @FXML public void initialize() { actualizar(); }
     @FXML private void actualizar() {
-        try {
-            totalEstudiantes.setText(String.valueOf(new JpaRepository<>(Estudiante.class).count()));
-            totalEmpresas.setText(String.valueOf(new JpaRepository<>(Empresa.class).count()));
-            totalOfertas.setText(String.valueOf(new JpaRepository<>(OfertaPractica.class).count()));
-            totalPracticas.setText(String.valueOf(new JpaRepository<>(Practica.class).count()));
+        FxDb.ejecutar(() -> new long[] {
+            new JpaRepository<>(Estudiante.class).count(),
+            new JpaRepository<>(Empresa.class).count(),
+            new JpaRepository<>(OfertaPractica.class).count(),
+            new JpaRepository<>(Practica.class).count()
+        }, cantidades -> {
+            totalEstudiantes.setText(String.valueOf(cantidades[0]));
+            totalEmpresas.setText(String.valueOf(cantidades[1]));
+            totalOfertas.setText(String.valueOf(cantidades[2]));
+            totalPracticas.setText(String.valueOf(cantidades[3]));
             resumen.setText("Panel actualizado desde PostgreSQL mediante Hibernate ORM.");
-        } catch (Exception ex) {
+        }, error -> {
             resumen.setText("No hay conexión activa. Revisa PostgreSQL y DB_PASSWORD.");
-            Alertas.error(ex.getMessage());
-        }
+            Alertas.error(error.getMessage());
+        });
     }
 }
