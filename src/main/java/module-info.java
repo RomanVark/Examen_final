@@ -9,6 +9,7 @@ module ni.edu.uam.practicasprofesionales {
     requires java.logging;
     requires jasperreports;
     requires java.net.http;
+    requires jdk.httpserver;
     requires com.google.gson;
     requires org.apache.poi.ooxml;
     requires org.apache.poi.poi;

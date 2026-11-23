@@ -131,7 +131,7 @@ La aplicación incluye **Servicios REST / JSON** en su menú JavaFX. Consulta la
 
 `UsuariosRestClient` utiliza `HttpClient` y comprueba el código HTTP, el tiempo máximo de espera, la respuesta vacía y los errores de conexión. Gson interpreta el JSON: `id`, `name`, `username`, `email`, `address.city` pasan a los cinco campos de `UsuarioApi`. `ServiciosWebController` administra el formulario, las columnas y las validaciones; `FxDb` mantiene la interfaz reactiva.
 
-**Demostración:** abre Servicios REST / JSON, pulsa **GET /users — Listar usuarios**, selecciona el ID 1 y usa **GET /users/{id} — Detalle**. Comprueba también ID 999 (respuesta vacía / HTTP 404), un ID negativo o no numérico y una consulta sin acceso a Internet. Estas operaciones no necesitan contraseña. Pruebas locales de JSON: `./mvnw -Dtest=UsuariosRestClientTest test`. Para el proyecto integrador hay que demostrar peticiones HTTP reales en vivo, no solo pruebas unitarias.
+**Demostración:** abre Servicios REST / JSON, pulsa **GET /users — Listar usuarios**, selecciona el ID 1 y usa **GET /users/{id} — Detalle**. Comprueba también ID 999 (respuesta vacía / HTTP 404), un ID negativo o no numérico y una consulta sin acceso a Internet. Estas operaciones no necesitan contraseña. Pruebas locales de JSON y HTTP real con un servidor temporal: `./mvnw -Dtest=UsuariosRestClientTest,UsuariosRestHttpTest test`. Para el proyecto integrador hay que demostrar peticiones HTTP reales en vivo, no solo pruebas unitarias.
 
 ### 3.7 Excel, etiquetas y vista previa
 
