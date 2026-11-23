@@ -9,7 +9,7 @@
     <HBox alignment="CENTER_LEFT" spacing="10">
         <Label text="Tipo de reporte:"/><ComboBox fx:id="selectorReporte" onAction="#cargar" prefWidth="340" />
         <Button text="Ejecutar consulta" onAction="#cargar" styleClass="primary-button" />
-        <Button text="Vista previa" onAction="#vistaPrevia" styleClass="secondary-button" />
+        <Button text="Vista previa PDF" onAction="#vistaPrevia" styleClass="secondary-button" />
         <Button text="Exportar CSV" onAction="#exportarCsv" styleClass="secondary-button" />
         <Button fx:id="btnExportarPdf" text="Exportar PDF" onAction="#exportarPdf" styleClass="secondary-button" />
         <Button text="Exportar Excel" onAction="#exportarExcel" styleClass="secondary-button" />

@@ -54,6 +54,24 @@ class ReportePdfServiceTest {
         assertEquals((byte) 'G', pagina[3]);
     }
 
+
+    @Test void vistaPreviaNavegaDocumentosMultipagina() throws Exception {
+        List<Map<String, ?>> filas = new java.util.ArrayList<>();
+        for (int i = 1; i <= 100; i++) {
+            filas.add(Map.of("codigo", "OF-" + i,
+                "oferta", "Oferta de práctica de prueba número " + i,
+                "postulaciones", String.valueOf(i % 5)));
+        }
+        var reporte = ReportePdfService.prepararReporte(
+            "reporte_postulaciones.jrxml", filas);
+        assertTrue(reporte.getPages().size() >= 2,
+            "El diseño debe distribuir automáticamente filas en varias páginas");
+        byte[] ultimaPagina = ReportePdfService.renderizarPagina(
+            reporte, reporte.getPages().size() - 1, 0.8f);
+        assertTrue(ultimaPagina.length > 1000,
+            "El visor debe poder renderizar también la última página");
+    }
+
     private void verificar(String plantilla, Map<String, ?> datos) throws Exception {
         Files.createDirectories(CARPETA);
         Path destino = CARPETA.resolve(plantilla.replace(".jrxml", ".pdf"));

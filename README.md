@@ -135,14 +135,14 @@ La aplicación incluye **Servicios REST / JSON** en su menú JavaFX. Consulta la
 
 ### 3.7 Excel, etiquetas y vista previa
 
-En **Reportes HQL**, selecciona un reporte y pulsa **Vista previa** para ver una tabla independiente con título, fecha y datos HQL reales. Es una vista previa tabular, **no una representación idéntica de las páginas PDF**.
+En **Reportes HQL**, selecciona un reporte y pulsa **Vista previa PDF**. Se abre un visor institucional de las **páginas reales generadas por JasperReports**, con controles **Anterior / Siguiente**, zoom del **60 % al 160 %**, **Guardar PDF** e **Imprimir**. La vista previa y la exportación usan las mismas plantillas `.jrxml` y el mismo mapeo de datos HQL; el visor procesa la generación y el renderizado en segundo plano mediante `FxDb`.
 
-- **Exportar PDF:** JasperReports crea el PDF desde una plantilla `.jrxml` con encabezados y fecha. También guarda el archivo compilado `.jasper` en `target/reportes-compilados/`.
+- **Exportar PDF:** JasperReports crea el PDF desde una plantilla `.jrxml` con cabecera institucional, tarjetas de indicadores calculados, fecha, filas alternadas y numeración de páginas. También guarda el archivo compilado `.jasper` en `target/reportes-compilados/`. El visor usa `JasperPrintManager.printPageToImage()` para mostrar las páginas reales y `JasperPrintManager.printReport()` para imprimir.
 - **Exportar Excel:** Apache POI genera un libro `.xlsx` válido con título, fecha, encabezados, registros, filtros de columna y panel fijo.
 - **Exportar CSV:** mantiene la exportación existente.
 - **Formularios:** etiquetas visibles en el módulo académico, etiquetas dinámicas, asteriscos, texto accesible y ayuda contextual en los catálogos.
 
-Pruebas: `.\mvnw.cmd "-Dtest=ReportePdfServiceTest,ReporteExcelServiceTest" test`. Las plantillas `.jrxml` están en `src/main/resources/reportes/`. Pueden abrirse y guardarse en **Jaspersoft Studio**. El repositorio no demuestra por sí solo el editor en el que fueron creadas; esa parte debe mostrarse en la defensa si se exige literalmente.
+Pruebas: `.\mvnw.cmd "-Dtest=ReportePdfServiceTest,ReporteExcelServiceTest" test`. Incluyen generación de los cuatro PDF, imagen PNG de la página JasperPrint, documentos de varias páginas y estructura Excel. Las plantillas `.jrxml` están en `src/main/resources/reportes/`. Pueden abrirse y guardarse en **Jaspersoft Studio**. El repositorio no demuestra por sí solo el editor en el que fueron creadas; esa parte debe mostrarse en la defensa si se exige literalmente.
 
 ## 4. Modelo de datos
 
