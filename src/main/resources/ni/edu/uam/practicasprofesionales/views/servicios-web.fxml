@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox spacing="15" xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.practicasprofesionales.controller.ServiciosWebController"
+      styleClass="page">
+    <Label text="Consumo de servicios web REST / JSON" styleClass="page-title"/>
+    <Label text="JSONPlaceholder — servicio externo de prueba con usuarios simulados; no provienen de PostgreSQL."
+           wrapText="true" styleClass="page-subtitle"/>
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button fx:id="btnListar" text="GET /users — Listar usuarios"
+                onAction="#listarUsuarios" styleClass="primary-button"/>
+        <Label text="ID del usuario:"/>
+        <TextField fx:id="campoId" promptText="Ej. 1" prefWidth="100"/>
+        <Button fx:id="btnDetalle" text="GET /users/{id} — Detalle"
+                onAction="#consultarDetalle" styleClass="secondary-button"/>
+        <ProgressIndicator fx:id="progreso" prefWidth="26" prefHeight="26"
+                           visible="false" managed="false"/>
+    </HBox>
+    <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="columnaId" text="ID" prefWidth="55"/>
+            <TableColumn fx:id="columnaNombre" text="Nombre" prefWidth="240"/>
+            <TableColumn fx:id="columnaUsuario" text="Usuario" prefWidth="155"/>
+            <TableColumn fx:id="columnaCorreo" text="Correo" prefWidth="245"/>
+            <TableColumn fx:id="columnaCiudad" text="Ciudad" prefWidth="175"/>
+        </columns>
+        <placeholder><Label text="Pulsa Listar usuarios para enviar una solicitud HTTP real."/></placeholder>
+    </TableView>
+    <Label fx:id="detalle" text="Selecciona un usuario para ver sus cinco campos." wrapText="true"/>
+    <Label fx:id="estadoHttp" text="Listo para consultar." wrapText="true" styleClass="status-note"/>
+</VBox>

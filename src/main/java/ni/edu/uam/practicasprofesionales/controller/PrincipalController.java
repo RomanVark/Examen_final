@@ -19,6 +19,7 @@ public class PrincipalController {
     @FXML public void mostrarCatalogos() { cargar("crud.fxml", "Catálogos académicos y empresas", Grupo.CATALOGOS); }
     @FXML public void mostrarOperaciones() { cargar("crud.fxml", "Gestión de prácticas", Grupo.OPERACIONES); }
     @FXML public void mostrarReportes() { cargar("reportes.fxml", "Reportes HQL", null); }
+    @FXML public void mostrarServiciosWeb() { cargar("servicios-web.fxml", "Servicios REST / JSON", null); }
     @FXML public void mostrarSeguimiento() {
         cargar("/ni/edu/uam/practicasprofesionales/seguimiento-reportes.fxml",
             "Reportes de seguimiento", null);
