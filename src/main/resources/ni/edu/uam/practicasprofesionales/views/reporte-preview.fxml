@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.practicasprofesionales.controller.ReportePreviewController"
+            style="-fx-background-color: #EAF0F3;">
+    <top>
+        <VBox spacing="12" style="-fx-background-color: #14344A;">
+            <padding><Insets top="18" right="22" bottom="15" left="22"/></padding>
+            <Label text="VISTA PREVIA DEL DOCUMENTO" style="-fx-text-fill: #A7DDD8; -fx-font-size: 11px; -fx-font-weight: bold;"/>
+            <Label fx:id="titulo" text="Reporte institucional"
+                   style="-fx-text-fill: white; -fx-font-size: 21px; -fx-font-weight: bold;"/>
+            <HBox spacing="9" alignment="CENTER_LEFT">
+                <Button fx:id="anterior" text="◀ Anterior" onAction="#paginaAnterior"/>
+                <Label fx:id="numeroPagina" text="Página 0 de 0"
+                       style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button fx:id="siguiente" text="Siguiente ▶" onAction="#paginaSiguiente"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="reducirZoom" text="−" onAction="#alejar"/>
+                <Label fx:id="etiquetaZoom" text="100 %"
+                       style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button fx:id="ampliarZoom" text="+" onAction="#acercar"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="exportarPdf" text="Guardar PDF" onAction="#guardarPdf"/>
+                <Button fx:id="imprimir" text="Imprimir" onAction="#imprimirReporte"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToHeight="false" fitToWidth="false" pannable="true"
+                    style="-fx-background-color: #DEE8EE;">
+            <content>
+                <StackPane alignment="TOP_CENTER" style="-fx-background-color: #DEE8EE;">
+                    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+                    <ImageView fx:id="paginaImagen" preserveRatio="true" smooth="true"/>
+                </StackPane>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10"
+              style="-fx-background-color: #FFFFFF; -fx-border-color: #D9E5EB;">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <ProgressIndicator fx:id="progreso" prefHeight="24" prefWidth="24"/>
+            <Label fx:id="estado" text="Preparando documento..."
+                   style="-fx-text-fill: #36546C; -fx-font-size: 12px;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -7,9 +7,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import ni.edu.uam.practicasprofesionales.service.ExportadorCsv;
 import ni.edu.uam.practicasprofesionales.service.ReporteExcelService;
@@ -19,8 +16,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /** Controlador de los dos reportes asignados al módulo de seguimiento. */
@@ -84,41 +79,87 @@ public class SeguimientoReportesController {
         }
     }
 
-    /** Previsualiza los datos del reporte seleccionado antes de exportarlo. */
+    /** Determina la plantilla y los nombres de campos que utiliza JasperReports. */
+    private record PlantillaSeguimiento(String archivo, List<String> campos) { }
+
+    private static PlantillaSeguimiento plantilla(ReporteSeguimientoService.Reporte reporte) {
+        if (reporte == ReporteSeguimientoService.HORAS_POR_PRACTICA) {
+            return new PlantillaSeguimiento("reporte_seguimiento_horas.jrxml",
+                List.of("practica", "estudiante", "horas"));
+        }
+        if (reporte == ReporteSeguimientoService.PROMEDIO_EVALUACIONES) {
+            return new PlantillaSeguimiento("reporte_seguimiento_promedios.jrxml",
+                List.of("estudiante", "promedio"));
+        }
+        throw new IllegalArgumentException("No existe plantilla PDF para el reporte seleccionado.");
+    }
+
+    /** Mapea los resultados HQL sin modificar sus datos ni asumir IDs consecutivos. */
+    private static List<java.util.Map<String, ?>> convertir(
+            List<Object[]> registros, PlantillaSeguimiento plantilla) {
+        List<java.util.Map<String, ?>> datos = new ArrayList<>();
+        for (Object[] valores : registros) {
+            if (valores.length != plantilla.campos().size()) {
+                throw new IllegalStateException("La consulta HQL no coincide con la plantilla.");
+            }
+            java.util.Map<String, Object> fila = new java.util.LinkedHashMap<>();
+            for (int i = 0; i < valores.length; i++) {
+                fila.put(plantilla.campos().get(i),
+                    valores[i] == null ? "" : valores[i].toString());
+            }
+            datos.add(fila);
+        }
+        return datos;
+    }
+
+    private static net.sf.jasperreports.engine.JasperPrint generarDocumento(
+            ReporteSeguimientoService.Reporte reporte) throws Exception {
+        PlantillaSeguimiento diseno = plantilla(reporte);
+        return ni.edu.uam.practicasprofesionales.service.ReportePdfService.prepararReporte(
+            diseno.archivo(), convertir(ReporteSeguimientoService.ejecutar(reporte), diseno));
+    }
+
+    /** Muestra exactamente las páginas generadas por JasperReports. */
     @FXML public void vistaPrevia() {
         var reporte = selectorReporte.getValue();
-        if (reporte == null) { textoResultado.setText("Selecciona un reporte."); return; }
-        Dialog<Void> dialogo = new Dialog<>();
-        dialogo.setTitle("Vista previa de seguimiento");
-        dialogo.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        Label titulo = new Label(reporte.titulo());
-        Label fecha = new Label("Generado: "
-            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        Label total = new Label("Consultando PostgreSQL...");
-        TableView<List<String>> vista = new TableView<>();
-        vista.setPrefSize(800, 450);
-        for (int i = 0; i < reporte.columnas().size(); i++) {
-            final int indice = i;
-            TableColumn<List<String>, String> columna =
-                new TableColumn<>(reporte.columnas().get(i));
-            columna.setCellValueFactory(x ->
-                new ReadOnlyStringWrapper(x.getValue().get(indice)));
-            columna.setPrefWidth(235);
-            vista.getColumns().add(columna);
+        if (reporte == null) {
+            textoResultado.setText("Selecciona un reporte para abrir la vista previa.");
+            return;
         }
-        VBox contenido = new VBox(12, titulo, fecha, total, vista);
-        dialogo.getDialogPane().setContent(contenido);
-        FxDb.ejecutar(() -> ReporteSeguimientoService.ejecutar(reporte), datos -> {
-            List<List<String>> filas = new ArrayList<>();
-            for (Object[] registro : datos) {
-                List<String> fila = new ArrayList<>();
-                for (Object valor : registro) fila.add(valor == null ? "" : valor.toString());
-                filas.add(fila);
-            }
-            vista.setItems(FXCollections.observableArrayList(filas));
-            total.setText(filas.size() + " registros (vista previa de datos)");
-        }, error -> total.setText("Error de consulta: " + error.getMessage()));
-        dialogo.show();
+        try {
+            ReportePreviewController.abrir(
+                tablaReporte.getScene().getWindow(), reporte.titulo(),
+                () -> generarDocumento(reporte));
+            textoResultado.setText("Abriendo vista previa institucional: " + reporte.titulo());
+        } catch (Exception ex) {
+            textoResultado.setText("No se pudo abrir la vista previa: " + ex.getMessage());
+        }
+    }
+
+    /** Exportación directa del mismo diseño PDF que muestra la vista previa. */
+    @FXML public void exportarPdf() {
+        var reporte = selectorReporte.getValue();
+        if (reporte == null) {
+            textoResultado.setText("Selecciona un reporte para exportar PDF.");
+            return;
+        }
+        var chooser = new FileChooser();
+        chooser.setTitle("Guardar reporte PDF de seguimiento");
+        chooser.setInitialFileName(reporte == ReporteSeguimientoService.HORAS_POR_PRACTICA
+            ? "seguimiento_horas.pdf" : "seguimiento_promedios.pdf");
+        chooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Documento PDF (*.pdf)", "*.pdf"));
+        File archivo = chooser.showSaveDialog(tablaReporte.getScene().getWindow());
+        if (archivo == null) return;
+        textoResultado.setText("Generando PDF institucional...");
+        FxDb.ejecutar(() -> {
+            var documento = generarDocumento(reporte);
+            ni.edu.uam.practicasprofesionales.service.ReportePdfService.exportarPdf(
+                documento, archivo.toPath());
+            return archivo.getName();
+        }, nombre -> textoResultado.setText("PDF exportado correctamente: " + nombre),
+            error -> textoResultado.setText("No se pudo exportar el PDF: "
+                + error.getMessage()));
     }
 
     @FXML public void exportarExcel() {

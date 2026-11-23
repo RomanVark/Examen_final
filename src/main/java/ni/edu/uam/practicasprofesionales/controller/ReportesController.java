@@ -140,19 +140,7 @@ public class ReportesController {
         // Se consulta PostgreSQL y compila JasperReports fuera del hilo JavaFX.
         FxDb.ejecutar(() -> {
             List<Object[]> resultados = ReporteHqlService.ejecutar(reporte);
-            List<Map<String, ?>> datos = new ArrayList<>();
-            for (Object[] fila : resultados) {
-                if (fila.length != plantilla.campos().size()) {
-                    throw new IllegalStateException("El reporte HQL devolvió " + fila.length
-                        + " campos; la plantilla espera " + plantilla.campos().size() + ".");
-                }
-                Map<String, Object> registro = new LinkedHashMap<>();
-                for (int i = 0; i < fila.length; i++) {
-                    registro.put(plantilla.campos().get(i),
-                        fila[i] == null ? "" : fila[i].toString());
-                }
-                datos.add(registro);
-            }
+            List<Map<String, ?>> datos = convertirDatos(plantilla, resultados);
             ReportePdfService.generarReporte(
                 plantilla.archivo(), datos, archivo.getAbsolutePath());
             return archivo.getAbsolutePath();
@@ -168,44 +156,49 @@ public class ReportesController {
     }
 
 
-    /** Vista previa real de las filas HQL, con título, fecha y encabezados. */
+    /** Abre un visor de las páginas reales del PDF JasperReports. */
     @FXML private void vistaPrevia() {
         var reporte = selectorReporte.getValue();
         if (reporte == null) {
-            Alertas.error("Selecciona primero un reporte.");
+            Alertas.error("Selecciona un reporte antes de previsualizar.");
             return;
         }
-        Dialog<Void> dialogo = new Dialog<>();
-        dialogo.setTitle("Vista previa — " + reporte.titulo());
-        dialogo.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        Label titulo = new Label(reporte.titulo());
-        titulo.getStyleClass().add("page-title");
-        Label fecha = new Label("Fecha de generación: "
-            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        Label total = new Label("Cargando datos reales desde PostgreSQL...");
-        TableView<List<String>> vista = new TableView<>();
-        vista.setPrefSize(850, 480);
-        for (int i = 0; i < reporte.columnas().size(); i++) {
-            final int indice = i;
-            TableColumn<List<String>, String> col = new TableColumn<>(reporte.columnas().get(i));
-            col.setCellValueFactory(x -> new ReadOnlyStringWrapper(x.getValue().get(indice)));
-            col.setPrefWidth(190);
-            vista.getColumns().add(col);
+        final PlantillaPdf plantilla;
+        try {
+            plantilla = plantillaPara(reporte);
+        } catch (IllegalArgumentException ex) {
+            Alertas.error(ex.getMessage());
+            return;
         }
-        VBox contenido = new VBox(12, titulo, fecha, total, new Separator(), vista);
-        contenido.setPrefWidth(880);
-        dialogo.getDialogPane().setContent(contenido);
-        FxDb.ejecutar(() -> ReporteHqlService.ejecutar(reporte), datos -> {
-            List<List<String>> filas = new ArrayList<>();
-            for (Object[] registro : datos) {
-                List<String> fila = new ArrayList<>();
-                for (Object campo : registro) fila.add(campo == null ? "" : campo.toString());
-                filas.add(fila);
+        try {
+            ReportePreviewController.abrir(
+                tablaReporte.getScene().getWindow(), reporte.titulo(), () -> {
+                    List<Object[]> resultados = ReporteHqlService.ejecutar(reporte);
+                    return ReportePdfService.prepararReporte(
+                        plantilla.archivo(), convertirDatos(plantilla, resultados));
+                });
+        } catch (Exception ex) {
+            Alertas.error("No se pudo abrir el visor: " + ex.getMessage());
+        }
+    }
+
+    /** La vista previa y la exportación usan el mismo mapeo de campos. */
+    private static List<Map<String, ?>> convertirDatos(
+            PlantillaPdf plantilla, List<Object[]> resultados) {
+        List<Map<String, ?>> datos = new ArrayList<>();
+        for (Object[] fila : resultados) {
+            if (fila.length != plantilla.campos().size()) {
+                throw new IllegalStateException("Campos HQL incompatibles con la plantilla: "
+                    + plantilla.archivo());
             }
-            vista.setItems(FXCollections.observableArrayList(filas));
-            total.setText(filas.size() + " registros | Vista previa de datos (no representación exacta del PDF)");
-        }, fallo -> total.setText("Error al consultar: " + fallo.getMessage()));
-        dialogo.show();
+            Map<String, Object> mapa = new LinkedHashMap<>();
+            for (int i = 0; i < fila.length; i++) {
+                mapa.put(plantilla.campos().get(i),
+                    fila[i] == null ? "" : fila[i].toString());
+            }
+            datos.add(mapa);
+        }
+        return datos;
     }
 
     @FXML private void exportarExcel() {

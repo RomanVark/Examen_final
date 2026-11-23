@@ -7,6 +7,7 @@ module ni.edu.uam.practicasprofesionales {
     requires java.sql;
     requires java.naming;
     requires java.logging;
+    requires java.desktop;
     requires jasperreports;
     requires java.net.http;
     requires jdk.httpserver;

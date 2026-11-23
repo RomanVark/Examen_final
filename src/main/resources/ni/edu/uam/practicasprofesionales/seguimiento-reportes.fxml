@@ -16,7 +16,8 @@
         <Label text="Tipo de reporte:"/>
         <ComboBox fx:id="selectorReporte" prefWidth="300.0"/>
         <Button text="Consultar" onAction="#cargarReporte"/>
-        <Button text="Vista previa" onAction="#vistaPrevia"/>
+        <Button text="Vista previa PDF" onAction="#vistaPrevia"/>
+        <Button text="Exportar PDF" onAction="#exportarPdf"/>
         <Button text="Exportar Excel" onAction="#exportarExcel"/>
         <Button text="Exportar CSV" onAction="#exportarCsv"/>
     </HBox>

@@ -39,6 +39,62 @@ class ReportePdfServiceTest {
             "estudiante", "Estudiante Prueba", "promedio", "90.5"));
     }
 
+    @Test void vistaPreviaRenderizaPaginaVerdaderaYContadores() throws Exception {
+        var datos = List.<Map<String, ?>>of(Map.of(
+            "id", "2", "estudiante", "Estudiante de prueba",
+            "empresa", "Empresa demo", "estado", "EN_CURSO"));
+        var impresion = ReportePdfService.prepararReporte(
+            "reporte_practicas.jrxml", datos);
+        assertFalse(impresion.getPages().isEmpty());
+        byte[] pagina = ReportePdfService.renderizarPagina(impresion, 0, 1f);
+        assertTrue(pagina.length > 1000);
+        assertEquals((byte) 0x89, pagina[0]);
+        assertEquals((byte) 'P', pagina[1]);
+        assertEquals((byte) 'N', pagina[2]);
+        assertEquals((byte) 'G', pagina[3]);
+    }
+
+
+    @Test void vistaPreviaNavegaDocumentosMultipagina() throws Exception {
+        List<Map<String, ?>> filas = new java.util.ArrayList<>();
+        for (int i = 1; i <= 100; i++) {
+            filas.add(Map.of("codigo", "OF-" + i,
+                "oferta", "Oferta de práctica de prueba número " + i,
+                "postulaciones", String.valueOf(i % 5)));
+        }
+        var reporte = ReportePdfService.prepararReporte(
+            "reporte_postulaciones.jrxml", filas);
+        assertTrue(reporte.getPages().size() >= 2,
+            "El diseño debe distribuir automáticamente filas en varias páginas");
+        byte[] ultimaPagina = ReportePdfService.renderizarPagina(
+            reporte, reporte.getPages().size() - 1, 0.8f);
+        assertTrue(ultimaPagina.length > 1000,
+            "El visor debe poder renderizar también la última página");
+    }
+
+
+    @Test void generaPdfSeguimientoHorasConDisenoInstitucional() throws Exception {
+        verificar("reporte_seguimiento_horas.jrxml", Map.of(
+            "practica", "8", "estudiante", "Estudiante Seguimiento",
+            "horas", "48"));
+    }
+
+    @Test void generaPdfSeguimientoEvaluacionesConDisenoInstitucional() throws Exception {
+        verificar("reporte_seguimiento_promedios.jrxml", Map.of(
+            "estudiante", "Estudiante Seguimiento", "promedio", "91.50"));
+    }
+
+    @Test void vistaPreviaSeguimientoUtilizaPaginasReales() throws Exception {
+        var documento = ReportePdfService.prepararReporte(
+            "reporte_seguimiento_horas.jrxml", List.of(
+                Map.of("practica", "3", "estudiante", "Prueba",
+                       "horas", "12")));
+        assertFalse(documento.getPages().isEmpty());
+        byte[] png = ReportePdfService.renderizarPagina(documento, 0, 1.0f);
+        assertTrue(png.length > 1000);
+        assertEquals((byte) 0x89, png[0]);
+    }
+
     private void verificar(String plantilla, Map<String, ?> datos) throws Exception {
         Files.createDirectories(CARPETA);
         Path destino = CARPETA.resolve(plantilla.replace(".jrxml", ".pdf"));
