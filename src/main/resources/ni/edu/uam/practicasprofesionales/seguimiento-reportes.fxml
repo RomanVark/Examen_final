@@ -13,8 +13,11 @@
     <Label text="Reportes de seguimiento"
            style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
     <HBox spacing="10.0">
+        <Label text="Tipo de reporte:"/>
         <ComboBox fx:id="selectorReporte" prefWidth="300.0"/>
         <Button text="Consultar" onAction="#cargarReporte"/>
+        <Button text="Vista previa" onAction="#vistaPrevia"/>
+        <Button text="Exportar Excel" onAction="#exportarExcel"/>
         <Button text="Exportar CSV" onAction="#exportarCsv"/>
     </HBox>
     <TableView fx:id="tablaReporte" VBox.vgrow="ALWAYS"/>

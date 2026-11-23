@@ -9,7 +9,9 @@
             <Label text="Administración de registros" styleClass="page-title" />
             <Label text="CRUD completo para las entidades. Selecciona un módulo y administra sus relaciones." styleClass="page-subtitle" />
             <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Tipo de registro:"/>
                 <ComboBox fx:id="selectorEntidad" onAction="#cambiarEntidad" prefWidth="285" promptText="Seleccionar módulo" />
+                <Label text="Buscar:"/>
                 <TextField fx:id="filtro" promptText="Buscar por ID o cualquier campo..." HBox.hgrow="ALWAYS" />
                 <Button text="Actualizar" onAction="#recargar" styleClass="secondary-button" />
             </HBox>
