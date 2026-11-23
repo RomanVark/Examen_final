@@ -31,7 +31,7 @@ public final class ReportePdfService {
 
     public static JasperPrint prepararReporte(
             String nombrePlantilla, Collection<Map<String, ?>> datos) throws Exception {
-        if (nombrePlantilla == null || !nombrePlantilla.matches("reporte_[a-z]+\\.jrxml")) {
+        if (nombrePlantilla == null || !nombrePlantilla.matches("reporte_[a-z]+(?:_[a-z]+)*\\.jrxml")) {
             throw new IllegalArgumentException("Nombre de plantilla no permitido.");
         }
         if (datos == null) throw new IllegalArgumentException("Los datos son obligatorios.");
