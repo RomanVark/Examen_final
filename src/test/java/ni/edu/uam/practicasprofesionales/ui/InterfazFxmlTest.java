@@ -35,6 +35,7 @@ class InterfazFxmlTest {
         "views/academico.fxml",
         "views/crud.fxml",
         "views/reportes.fxml",
+        "views/servicios-web.fxml",
         "seguimiento-reportes.fxml"
     );
     private static final Pattern CONTROLLER = Pattern.compile("fx:controller=\"([^\"]+)\"");

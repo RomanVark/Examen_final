@@ -8,6 +8,11 @@ module ni.edu.uam.practicasprofesionales {
     requires java.naming;
     requires java.logging;
     requires jasperreports;
+    requires java.net.http;
+    requires jdk.httpserver;
+    requires com.google.gson;
+    requires org.apache.poi.ooxml;
+    requires org.apache.poi.poi;
 
     exports ni.edu.uam.practicasprofesionales.app;
     opens ni.edu.uam.practicasprofesionales.app to javafx.graphics;

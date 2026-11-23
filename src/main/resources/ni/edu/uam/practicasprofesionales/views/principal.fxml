@@ -17,6 +17,7 @@
             <Button text="  Catálogos" onAction="#mostrarCatalogos" maxWidth="Infinity" styleClass="nav-button" />
             <Button text="  Gestión de prácticas" onAction="#mostrarOperaciones" maxWidth="Infinity" styleClass="nav-button" />
             <Button text="  Reportes HQL" onAction="#mostrarReportes" maxWidth="Infinity" styleClass="nav-button" />
+            <Button text="  Servicios REST / JSON" onAction="#mostrarServiciosWeb" maxWidth="Infinity" styleClass="nav-button" />
             <Button text="  Seguimiento / Reportes" onAction="#mostrarSeguimiento" maxWidth="Infinity" styleClass="nav-button" />
             <Region VBox.vgrow="ALWAYS"/>
             <Label text="Java 21 · JavaFX · Hibernate" styleClass="sidebar-footnote" />

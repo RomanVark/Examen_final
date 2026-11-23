@@ -27,6 +27,7 @@ jobs:
           if-no-files-found: warn
           path: |
             target/reportes-verificados/*.pdf
+            target/reportes-compilados/*.jasper
             target/surefire-reports/*.txt
             target/surefire-reports/*.xml
 

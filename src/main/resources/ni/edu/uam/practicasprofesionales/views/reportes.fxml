@@ -7,10 +7,12 @@
     <Label text="Consultas HQL y reportes" styleClass="page-title" />
     <Label text="Consultas JOIN con datos reales recuperados de PostgreSQL a través de Hibernate." styleClass="page-subtitle" />
     <HBox alignment="CENTER_LEFT" spacing="10">
-        <ComboBox fx:id="selectorReporte" onAction="#cargar" prefWidth="430" />
+        <Label text="Tipo de reporte:"/><ComboBox fx:id="selectorReporte" onAction="#cargar" prefWidth="340" />
         <Button text="Ejecutar consulta" onAction="#cargar" styleClass="primary-button" />
+        <Button text="Vista previa" onAction="#vistaPrevia" styleClass="secondary-button" />
         <Button text="Exportar CSV" onAction="#exportarCsv" styleClass="secondary-button" />
         <Button fx:id="btnExportarPdf" text="Exportar PDF" onAction="#exportarPdf" styleClass="secondary-button" />
+        <Button text="Exportar Excel" onAction="#exportarExcel" styleClass="secondary-button" />
     </HBox>
     <TableView fx:id="tablaReporte" VBox.vgrow="ALWAYS" >
             <placeholder><Label text="No hay resultados para la consulta seleccionada." /></placeholder>
