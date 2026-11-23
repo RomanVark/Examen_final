@@ -117,13 +117,13 @@ public final class ReportePdfService {
         String titulo;
         boolean promedio;
         switch (nombre) {
-            case "reporte_horas.jrxml" -> {
+            case "reporte_horas.jrxml", "reporte_seguimiento_horas.jrxml" -> {
                 campo = "horas"; titulo = "HORAS REGISTRADAS"; promedio = false;
             }
             case "reporte_postulaciones.jrxml" -> {
                 campo = "postulaciones"; titulo = "POSTULACIONES TOTALES"; promedio = false;
             }
-            case "reporte_promedios.jrxml" -> {
+            case "reporte_promedios.jrxml", "reporte_seguimiento_promedios.jrxml" -> {
                 campo = "promedio"; titulo = "PROMEDIO GENERAL"; promedio = true;
             }
             default -> { return new Indicador("REGISTROS", String.valueOf(datos.size())); }

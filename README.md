@@ -144,6 +144,14 @@ En **Reportes HQL**, selecciona un reporte y pulsa **Vista previa PDF**. Se abre
 
 Pruebas: `.\mvnw.cmd "-Dtest=ReportePdfServiceTest,ReporteExcelServiceTest" test`. Incluyen generación de los cuatro PDF, imagen PNG de la página JasperPrint, documentos de varias páginas y estructura Excel. Las plantillas `.jrxml` están en `src/main/resources/reportes/`. Pueden abrirse y guardarse en **Jaspersoft Studio**. El repositorio no demuestra por sí solo el editor en el que fueron creadas; esa parte debe mostrarse en la defensa si se exige literalmente.
 
+### 3.8 Seguimiento: PDF institucional y vista previa real
+
+En **Seguimiento / Reportes**, elige **Horas registradas por práctica** o **Promedio de evaluación por estudiante**. Los botones **Vista previa PDF** y **Exportar PDF** utilizan las plantillas `reporte_seguimiento_horas.jrxml` y `reporte_seguimiento_promedios.jrxml`, con encabezado institucional, fecha de generación, total de registros, indicador calculado y pie de página.
+
+La vista previa reutiliza el mismo `ReportePreviewController` que **Reportes HQL**, con zoom, navegación entre páginas, impresión y guardado del PDF ya renderizado. Excel y CSV permanecen disponibles. Los registros del PDF provienen directamente de PostgreSQL a través de HQL y la generación se realiza fuera del hilo JavaFX.
+
+Prueba de las plantillas con datos ficticios: `.\\mvnw.cmd "-Dtest=ReportePdfServiceTest" test`. Comprueba los archivos `target/reportes-verificados/reporte_seguimiento_horas.pdf` y `target/reportes-verificados/reporte_seguimiento_promedios.pdf`.
+
 ## 4. Modelo de datos
 
 Las 12 entidades JPA se registran en `src/main/resources/hibernate.cfg.xml`.

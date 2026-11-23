@@ -72,6 +72,29 @@ class ReportePdfServiceTest {
             "El visor debe poder renderizar también la última página");
     }
 
+
+    @Test void generaPdfSeguimientoHorasConDisenoInstitucional() throws Exception {
+        verificar("reporte_seguimiento_horas.jrxml", Map.of(
+            "practica", "8", "estudiante", "Estudiante Seguimiento",
+            "horas", "48"));
+    }
+
+    @Test void generaPdfSeguimientoEvaluacionesConDisenoInstitucional() throws Exception {
+        verificar("reporte_seguimiento_promedios.jrxml", Map.of(
+            "estudiante", "Estudiante Seguimiento", "promedio", "91.50"));
+    }
+
+    @Test void vistaPreviaSeguimientoUtilizaPaginasReales() throws Exception {
+        var documento = ReportePdfService.prepararReporte(
+            "reporte_seguimiento_horas.jrxml", List.of(
+                Map.of("practica", "3", "estudiante", "Prueba",
+                       "horas", "12")));
+        assertFalse(documento.getPages().isEmpty());
+        byte[] png = ReportePdfService.renderizarPagina(documento, 0, 1.0f);
+        assertTrue(png.length > 1000);
+        assertEquals((byte) 0x89, png[0]);
+    }
+
     private void verificar(String plantilla, Map<String, ?> datos) throws Exception {
         Files.createDirectories(CARPETA);
         Path destino = CARPETA.resolve(plantilla.replace(".jrxml", ".pdf"));
