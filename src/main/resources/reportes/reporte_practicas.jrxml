@@ -5,13 +5,14 @@
  name="reporte_practicas" pageWidth="842" pageHeight="595" orientation="Landscape"
  columnWidth="802" leftMargin="20" rightMargin="20" topMargin="25" bottomMargin="25"
  whenNoDataType="AllSectionsNoDetail">
- <field name="id" class="java.lang.String"/>
+<parameter name="TOTAL_REGISTROS" class="java.lang.Integer"/>
+ <parameter name="INDICADOR_TITULO" class="java.lang.String"/>
+ <parameter name="INDICADOR_VALOR" class="java.lang.String"/>
+<field name="id" class="java.lang.String"/>
  <field name="estudiante" class="java.lang.String"/>
  <field name="empresa" class="java.lang.String"/>
  <field name="estado" class="java.lang.String"/>
- <parameter name="TOTAL_REGISTROS" class="java.lang.Integer"/>
- <parameter name="INDICADOR_TITULO" class="java.lang.String"/>
- <parameter name="INDICADOR_VALOR" class="java.lang.String"/>
+
  <title><band height="168">
   <rectangle><reportElement x="0" y="0" width="802" height="94" mode="Opaque" backcolor="#14344A"></reportElement></rectangle>
   <rectangle><reportElement x="20" y="19" width="61" height="56" mode="Opaque" backcolor="#1C9F9A"></reportElement></rectangle>
