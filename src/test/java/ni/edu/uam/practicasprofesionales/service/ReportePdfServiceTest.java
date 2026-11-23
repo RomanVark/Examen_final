@@ -39,6 +39,21 @@ class ReportePdfServiceTest {
             "estudiante", "Estudiante Prueba", "promedio", "90.5"));
     }
 
+    @Test void vistaPreviaRenderizaPaginaVerdaderaYContadores() throws Exception {
+        var datos = List.<Map<String, ?>>of(Map.of(
+            "id", "2", "estudiante", "Estudiante de prueba",
+            "empresa", "Empresa demo", "estado", "EN_CURSO"));
+        var impresion = ReportePdfService.prepararReporte(
+            "reporte_practicas.jrxml", datos);
+        assertFalse(impresion.getPages().isEmpty());
+        byte[] pagina = ReportePdfService.renderizarPagina(impresion, 0, 1f);
+        assertTrue(pagina.length > 1000);
+        assertEquals((byte) 0x89, pagina[0]);
+        assertEquals((byte) 'P', pagina[1]);
+        assertEquals((byte) 'N', pagina[2]);
+        assertEquals((byte) 'G', pagina[3]);
+    }
+
     private void verificar(String plantilla, Map<String, ?> datos) throws Exception {
         Files.createDirectories(CARPETA);
         Path destino = CARPETA.resolve(plantilla.replace(".jrxml", ".pdf"));
