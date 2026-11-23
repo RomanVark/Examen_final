@@ -13,7 +13,7 @@
                 onAction="#listarUsuarios" styleClass="primary-button"/>
         <Label text="ID del usuario:"/>
         <TextField fx:id="campoId" promptText="Ej. 1" prefWidth="100"/>
-        <Button fx:id="btnDetalle" text="GET /users/{id} — Detalle"
+        <Button fx:id="btnDetalle" text="Consultar usuario por ID"
                 onAction="#consultarDetalle" styleClass="secondary-button"/>
         <ProgressIndicator fx:id="progreso" prefWidth="26" prefHeight="26"
                            visible="false" managed="false"/>
