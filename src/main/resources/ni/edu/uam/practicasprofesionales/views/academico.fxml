@@ -11,9 +11,9 @@
   <VBox styleClass="academic-editor" spacing="10">
     <Label text="Formulario de carreras" styleClass="academic-section-title"/>
     
-    <TextField fx:id="carreraCodigo" promptText="Código"/>
-<TextField fx:id="carreraNombre" promptText="Nombre de carrera"/>
-<TextField fx:id="carreraFacultad" promptText="Facultad"/>
+    <Label text="Código de carrera *"/><TextField fx:id="carreraCodigo" promptText="Código"/>
+<Label text="Nombre de la carrera *"/><TextField fx:id="carreraNombre" promptText="Nombre de carrera"/>
+<Label text="Facultad *"/><TextField fx:id="carreraFacultad" promptText="Facultad"/>
     <CheckBox fx:id="carreraActiva" text="Activa" selected="true"/>
     <Button text="Guardar / actualizar" maxWidth="Infinity" onAction="#guardarCarrera" styleClass="academic-primary"/>
     <Button text="Eliminar seleccionado" maxWidth="Infinity" onAction="#eliminarCarrera"/>
@@ -26,12 +26,12 @@
   <right><ScrollPane fitToWidth="true" prefWidth="300" styleClass="academic-form-scroll"><content>
   <VBox styleClass="academic-editor" spacing="10">
     <Label text="Formulario de estudiantes" styleClass="academic-section-title"/>
-    <Label text="Búsqueda por carné, nombre o carrera"/><TextField fx:id="buscarEstudiante" promptText="Buscar estudiante"/><Label text="Carrera asignada"/><ComboBox fx:id="estudianteCarrera" maxWidth="Infinity"/>
-    <TextField fx:id="estudianteCarnet" promptText="Carné"/>
-<TextField fx:id="estudianteNombres" promptText="Nombres"/>
-<TextField fx:id="estudianteApellidos" promptText="Apellidos"/>
-<TextField fx:id="estudianteCorreo" promptText="Correo"/>
-<TextField fx:id="estudianteTelefono" promptText="Teléfono"/>
+    <Label text="Buscar estudiante"/><TextField fx:id="buscarEstudiante" promptText="Buscar estudiante"/><Label text="Carrera asignada"/><ComboBox fx:id="estudianteCarrera" maxWidth="Infinity"/>
+    <Label text="Carné del estudiante *"/><TextField fx:id="estudianteCarnet" promptText="Carné"/>
+<Label text="Nombres *"/><TextField fx:id="estudianteNombres" promptText="Nombres"/>
+<Label text="Apellidos *"/><TextField fx:id="estudianteApellidos" promptText="Apellidos"/>
+<Label text="Correo electrónico *"/><TextField fx:id="estudianteCorreo" promptText="Correo"/>
+<Label text="Teléfono"/><TextField fx:id="estudianteTelefono" promptText="Teléfono"/>
     <CheckBox fx:id="estudianteActivo" text="Activo" selected="true"/>
     <Button text="Guardar / actualizar" maxWidth="Infinity" onAction="#guardarEstudiante" styleClass="academic-primary"/>
     <Button text="Eliminar seleccionado" maxWidth="Infinity" onAction="#eliminarEstudiante"/>
@@ -44,11 +44,11 @@
   <right><ScrollPane fitToWidth="true" prefWidth="300" styleClass="academic-form-scroll"><content>
   <VBox styleClass="academic-editor" spacing="10">
     <Label text="Formulario de tutores" styleClass="academic-section-title"/>
-    <Label text="Búsqueda de tutor"/><TextField fx:id="buscarTutor" promptText="Buscar tutor"/>
-    <TextField fx:id="tutorNombres" promptText="Nombres"/>
-<TextField fx:id="tutorApellidos" promptText="Apellidos"/>
-<TextField fx:id="tutorCorreo" promptText="Correo"/>
-<TextField fx:id="tutorEspecialidad" promptText="Especialidad"/>
+    <Label text="Buscar tutor"/><TextField fx:id="buscarTutor" promptText="Buscar tutor"/>
+    <Label text="Nombres del tutor *"/><TextField fx:id="tutorNombres" promptText="Nombres"/>
+<Label text="Apellidos del tutor *"/><TextField fx:id="tutorApellidos" promptText="Apellidos"/>
+<Label text="Correo electrónico *"/><TextField fx:id="tutorCorreo" promptText="Correo"/>
+<Label text="Especialidad *"/><TextField fx:id="tutorEspecialidad" promptText="Especialidad"/>
     <CheckBox fx:id="tutorActivo" text="Activo" selected="true"/>
     <Button text="Guardar / actualizar" maxWidth="Infinity" onAction="#guardarTutor" styleClass="academic-primary"/>
     <Button text="Eliminar seleccionado" maxWidth="Infinity" onAction="#eliminarTutor"/>

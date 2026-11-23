@@ -44,7 +44,12 @@
                                forecolor="#D7E0EA"/>
             </line>
 
-        </band>
+                    <textField pattern="dd/MM/yyyy HH:mm">
+                <reportElement x="505" y="78" width="290" height="18"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+</band>
     </title>
 
     <!-- ENCABEZADOS DE LA TABLA -->

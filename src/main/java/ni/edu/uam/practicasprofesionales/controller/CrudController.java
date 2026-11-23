@@ -92,6 +92,9 @@ public class CrudController {
             Label nombre = new Label(campo.label() + (campo.required() ? " *" : ""));
             nombre.getStyleClass().add("field-caption");
             Control control = fabricarControl(campo);
+            control.setAccessibleText(campo.label() + (campo.required() ? " (obligatorio)" : ""));
+            control.setTooltip(new Tooltip("Campo " + campo.label()
+                + (campo.required() ? " — obligatorio" : " — opcional")));
             control.setMaxWidth(Double.MAX_VALUE);
             control.getStyleClass().add("input-app");
             grupo.getChildren().addAll(nombre, control);

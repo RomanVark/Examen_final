@@ -2,6 +2,7 @@ package ni.edu.uam.practicasprofesionales.controller;
 
 import ni.edu.uam.practicasprofesionales.service.ReporteHqlService;
 import ni.edu.uam.practicasprofesionales.service.ReportePdfService;
+import ni.edu.uam.practicasprofesionales.service.ReporteExcelService;
 import ni.edu.uam.practicasprofesionales.util.Alertas;
 import ni.edu.uam.practicasprofesionales.util.FxDb;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -12,11 +13,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableRow;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.Separator;
+
 import javafx.stage.FileChooser;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.List;
@@ -154,6 +164,79 @@ public class ReportesController {
             btnExportarPdf.setDisable(false);
             textoResultado.setText("No se pudo generar el reporte PDF.");
             Alertas.error("Error de exportación PDF: " + error.getMessage());
+        });
+    }
+
+
+    /** Vista previa real de las filas HQL, con título, fecha y encabezados. */
+    @FXML private void vistaPrevia() {
+        var reporte = selectorReporte.getValue();
+        if (reporte == null) {
+            Alertas.error("Selecciona primero un reporte.");
+            return;
+        }
+        Dialog<Void> dialogo = new Dialog<>();
+        dialogo.setTitle("Vista previa — " + reporte.titulo());
+        dialogo.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        Label titulo = new Label(reporte.titulo());
+        titulo.getStyleClass().add("page-title");
+        Label fecha = new Label("Fecha de generación: "
+            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        Label total = new Label("Cargando datos reales desde PostgreSQL...");
+        TableView<List<String>> vista = new TableView<>();
+        vista.setPrefSize(850, 480);
+        for (int i = 0; i < reporte.columnas().size(); i++) {
+            final int indice = i;
+            TableColumn<List<String>, String> col = new TableColumn<>(reporte.columnas().get(i));
+            col.setCellValueFactory(x -> new ReadOnlyStringWrapper(x.getValue().get(indice)));
+            col.setPrefWidth(190);
+            vista.getColumns().add(col);
+        }
+        VBox contenido = new VBox(12, titulo, fecha, total, new Separator(), vista);
+        contenido.setPrefWidth(880);
+        dialogo.getDialogPane().setContent(contenido);
+        FxDb.ejecutar(() -> ReporteHqlService.ejecutar(reporte), datos -> {
+            List<List<String>> filas = new ArrayList<>();
+            for (Object[] registro : datos) {
+                List<String> fila = new ArrayList<>();
+                for (Object campo : registro) fila.add(campo == null ? "" : campo.toString());
+                filas.add(fila);
+            }
+            vista.setItems(FXCollections.observableArrayList(filas));
+            total.setText(filas.size() + " registros | Vista previa de datos (no representación exacta del PDF)");
+        }, fallo -> total.setText("Error al consultar: " + fallo.getMessage()));
+        dialogo.show();
+    }
+
+    @FXML private void exportarExcel() {
+        var reporte = selectorReporte.getValue();
+        if (reporte == null) { Alertas.error("Selecciona un reporte."); return; }
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Guardar reporte Excel");
+        chooser.setInitialFileName("reporte_" + reporte.titulo()
+            .toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]+", "_") + ".xlsx");
+        chooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Libro Excel (*.xlsx)", "*.xlsx"));
+        var archivo = chooser.showSaveDialog(tablaReporte.getScene().getWindow());
+        if (archivo == null) return;
+        textoResultado.setText("Generando archivo Excel...");
+        FxDb.ejecutar(() -> {
+            List<Object[]> datos = ReporteHqlService.ejecutar(reporte);
+            List<List<String>> filas = new ArrayList<>();
+            for (Object[] dato : datos) {
+                List<String> fila = new ArrayList<>();
+                for (Object valor : dato) fila.add(valor == null ? "" : valor.toString());
+                filas.add(fila);
+            }
+            ReporteExcelService.generar(reporte.titulo(), reporte.columnas(),
+                filas, archivo.toPath());
+            return filas.size();
+        }, cantidad -> {
+            textoResultado.setText("Excel generado: " + cantidad + " registros.");
+            Alertas.informacion("Excel XLSX guardado correctamente:\n" + archivo.getAbsolutePath());
+        }, fallo -> {
+            textoResultado.setText("Error al exportar Excel.");
+            Alertas.error("No se pudo exportar Excel: " + fallo.getMessage());
         });
     }
 
