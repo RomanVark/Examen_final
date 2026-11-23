@@ -120,6 +120,30 @@ ORDER BY table_name;
 
 La consola con instrucciones `create table` más el resultado exitoso servirán para la captura `02-ddl-hibernate.png`. No se debe afirmar que la creación se completó hasta ejecutar y comprobar el test.
 
+### 3.6 Módulo de consumo REST / JSON (evaluación integradora)
+
+La aplicación incluye **Servicios REST / JSON** en su menú JavaFX. Consulta la API pública [JSONPlaceholder](https://jsonplaceholder.typicode.com/), cuyos usuarios son **simulados** (no son alumnos ni datos de la universidad).
+
+| Operación | Método/endpoint | Resultado |
+|---|---|---|
+| Listado | `GET https://jsonplaceholder.typicode.com/users` | Tabla con usuarios |
+| Detalle | `GET https://jsonplaceholder.typicode.com/users/1` | Un usuario concreto |
+
+`UsuariosRestClient` utiliza `HttpClient` y comprueba el código HTTP, el tiempo máximo de espera, la respuesta vacía y los errores de conexión. Gson interpreta el JSON: `id`, `name`, `username`, `email`, `address.city` pasan a los cinco campos de `UsuarioApi`. `ServiciosWebController` administra el formulario, las columnas y las validaciones; `FxDb` mantiene la interfaz reactiva.
+
+**Demostración:** abre Servicios REST / JSON, pulsa **GET /users — Listar usuarios**, selecciona el ID 1 y usa **GET /users/{id} — Detalle**. Comprueba también ID 999 (respuesta vacía / HTTP 404), un ID negativo o no numérico y una consulta sin acceso a Internet. Estas operaciones no necesitan contraseña. Pruebas locales de JSON: `./mvnw -Dtest=UsuariosRestClientTest test`. Para el proyecto integrador hay que demostrar peticiones HTTP reales en vivo, no solo pruebas unitarias.
+
+### 3.7 Excel, etiquetas y vista previa
+
+En **Reportes HQL**, selecciona un reporte y pulsa **Vista previa** para ver una tabla independiente con título, fecha y datos HQL reales. Es una vista previa tabular, **no una representación idéntica de las páginas PDF**.
+
+- **Exportar PDF:** JasperReports crea el PDF desde una plantilla `.jrxml` con encabezados y fecha. También guarda el archivo compilado `.jasper` en `target/reportes-compilados/`.
+- **Exportar Excel:** Apache POI genera un libro `.xlsx` válido con título, fecha, encabezados, registros, filtros de columna y panel fijo.
+- **Exportar CSV:** mantiene la exportación existente.
+- **Formularios:** etiquetas visibles en el módulo académico, etiquetas dinámicas, asteriscos, texto accesible y ayuda contextual en los catálogos.
+
+Pruebas: `.\mvnw.cmd "-Dtest=ReportePdfServiceTest,ReporteExcelServiceTest" test`. Las plantillas `.jrxml` están en `src/main/resources/reportes/`. Pueden abrirse y guardarse en **Jaspersoft Studio**. El repositorio no demuestra por sí solo el editor en el que fueron creadas; esa parte debe mostrarse en la defensa si se exige literalmente.
+
 ## 4. Modelo de datos
 
 Las 12 entidades JPA se registran en `src/main/resources/hibernate.cfg.xml`.

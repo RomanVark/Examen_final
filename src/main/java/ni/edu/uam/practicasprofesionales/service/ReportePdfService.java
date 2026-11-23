@@ -4,6 +4,9 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.util.JRSaver;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import java.io.InputStream;
@@ -32,6 +35,11 @@ public class ReportePdfService {
 
             var reporteCompilado =
                     JasperCompileManager.compileReport(archivo);
+
+            Path compilados = Path.of("target", "reportes-compilados");
+            Files.createDirectories(compilados);
+            JRSaver.saveObject(reporteCompilado,
+                compilados.resolve(nombrePlantilla.replace(".jrxml", ".jasper")).toFile());
 
             JRMapCollectionDataSource fuente =
                     new JRMapCollectionDataSource(datos);

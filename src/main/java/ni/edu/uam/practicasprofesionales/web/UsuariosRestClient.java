@@ -43,7 +43,11 @@ public final class UsuariosRestClient {
 
     /** GET /users: primera operación exigida. */
     public List<UsuarioApi> listar() throws IOException, InterruptedException {
-        String json = obtener("/users");
+        return interpretarLista(obtener("/users"));
+    }
+
+    /** Procesar JSON independientemente de red. */
+    public static List<UsuarioApi> interpretarLista(String json) throws IOException {
         JsonElement elemento = JsonParser.parseString(json);
         if (!elemento.isJsonArray()) throw new IOException("Respuesta JSON inesperada: se esperaba una lista.");
         List<UsuarioApi> resultado = new ArrayList<>();
@@ -56,7 +60,10 @@ public final class UsuariosRestClient {
     /** GET /users/{id}: segunda operación exigida. */
     public UsuarioApi detalle(int id) throws IOException, InterruptedException {
         if (id <= 0) throw new IllegalArgumentException("El identificador debe ser un entero positivo.");
-        String json = obtener("/users/" + id);
+        return interpretarDetalle(obtener("/users/" + id), id);
+    }
+
+    public static UsuarioApi interpretarDetalle(String json, int id) throws IOException {
         JsonElement elemento = JsonParser.parseString(json);
         if (!elemento.isJsonObject() || elemento.getAsJsonObject().size() == 0) {
             throw new IOException("No existe el usuario " + id + " (respuesta vacía).");
